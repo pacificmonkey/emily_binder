@@ -1,0 +1,148 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  margin: 0;
+}
+
+.coinBalance {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-calm-100);
+  border-radius: var(--radius-full);
+}
+
+.coinIcon {
+  font-size: 16px;
+}
+
+.coinCount {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-calm-800);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.categoryTitle {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-calm-600);
+  margin: 0;
+}
+
+.stickerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-3);
+}
+
+.stickerItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: var(--color-calm-50);
+  transition: background-color var(--duration-fast) var(--ease-gentle);
+}
+
+.stickerItem:hover {
+  background-color: var(--color-calm-100);
+}
+
+.stickerImage {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stickerImage img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.stickerInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  text-align: center;
+}
+
+.stickerName {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-800);
+}
+
+.stickerPrice {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+}
+
+.ownedBadge {
+  font-size: var(--font-size-xs);
+  color: var(--color-success-600);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-success-50);
+  border-radius: var(--radius-full);
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8) 0;
+}
+
+/* Category Filters */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.filterChip {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-600);
+  background-color: var(--color-calm-100);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.filterChip:hover {
+  background-color: var(--color-calm-200);
+}
+
+.filterChip.active {
+  background-color: var(--color-accent-100);
+  color: var(--color-accent-700);
+  border-color: var(--color-accent-300);
+}

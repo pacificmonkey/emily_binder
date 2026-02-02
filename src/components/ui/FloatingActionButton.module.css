@@ -1,0 +1,47 @@
+.fab {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-accent-500);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+  touch-action: manipulation;
+  z-index: 10;
+}
+
+.fab:hover {
+  background-color: var(--color-accent-600);
+  transform: scale(1.05);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+/* Position variants */
+.bottom-right {
+  right: var(--space-4);
+  bottom: calc(80px + var(--space-4) + env(safe-area-inset-bottom, 0px));
+}
+
+.bottom-left {
+  left: var(--space-4);
+  bottom: calc(80px + var(--space-4) + env(safe-area-inset-bottom, 0px));
+}
+
+.top-right {
+  right: var(--space-4);
+  top: calc(var(--space-4) + env(safe-area-inset-top, 0px));
+}
+
+.top-left {
+  left: var(--space-4);
+  top: calc(var(--space-4) + env(safe-area-inset-top, 0px));
+}

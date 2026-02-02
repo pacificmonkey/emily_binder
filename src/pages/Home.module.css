@@ -1,0 +1,325 @@
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.header {
+  text-align: center;
+  padding: var(--space-4) 0;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.settingsButton {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--color-calm-500);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.settingsButton:hover {
+  background-color: var(--color-calm-100);
+  color: var(--color-calm-700);
+}
+
+.settingsButton:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.greeting {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-calm-500);
+  margin: 0;
+}
+
+/* Status Card */
+.statusCard {
+  background: linear-gradient(135deg, var(--color-accent-50), var(--color-calm-50));
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.statValue {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-calm-800);
+}
+
+.statLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+  text-transform: lowercase;
+}
+
+.statDivider {
+  width: 1px;
+  height: 40px;
+  background-color: var(--color-calm-200);
+}
+
+/* Gamification Row */
+.gamificationRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.gamificationCard {
+  text-align: center;
+}
+
+.gamificationCard [class*="content"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3);
+}
+
+.gamificationIcon {
+  font-size: 24px;
+}
+
+.gamificationValue {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-calm-800);
+}
+
+.gamificationLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+}
+
+/* Level Progress */
+.levelProgress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-lg);
+}
+
+.levelProgressLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-600);
+}
+
+.levelProgressTrack {
+  height: 8px;
+  background-color: var(--color-calm-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.levelProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-400), var(--color-accent-500));
+  border-radius: var(--radius-full);
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+/* Loading */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0;
+}
+
+/* Mood Card */
+.moodCard {
+  text-align: center;
+  border-color: var(--color-accent-200);
+  background-color: var(--color-accent-50);
+}
+
+.moodTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.moodSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.moodButton {
+  width: 100%;
+}
+
+/* Add Button */
+.addButton {
+  position: fixed;
+  right: var(--space-4);
+  bottom: calc(80px + var(--space-4) + env(safe-area-inset-bottom, 0px));
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-accent-500);
+  color: white;
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--duration-fast) var(--ease-gentle);
+  touch-action: manipulation;
+  z-index: 10;
+}
+
+.addButton:hover {
+  background-color: var(--color-accent-600);
+  transform: scale(1.05);
+}
+
+.addButton:active {
+  transform: scale(0.95);
+}
+
+/* Section Title */
+.sectionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-500);
+  margin: 0 0 var(--space-2) 0;
+}
+
+/* Badges Section */
+.badgesSection {
+  padding: var(--space-3);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-lg);
+}
+
+.badgesList {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: white;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+}
+
+.badgeIcon {
+  font-size: 20px;
+}
+
+.badgeName {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-700);
+}
+
+/* Streaks Section */
+.streaksSection {
+  padding: var(--space-3);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-lg);
+}
+
+.streaksList {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.streak {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: white;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+}
+
+.streakIcon {
+  font-size: 20px;
+}
+
+.streakCount {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-calm-700);
+}
+
+/* Sticker Button */
+.stickerButton {
+  position: fixed;
+  left: var(--space-4);
+  bottom: calc(80px + var(--space-4) + env(safe-area-inset-bottom, 0px));
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 2px solid var(--color-calm-200);
+  border-radius: 50%;
+  box-shadow: var(--shadow-md);
+  transition: all var(--duration-fast) var(--ease-gentle);
+  touch-action: manipulation;
+  z-index: 10;
+}
+
+.stickerButton:hover {
+  border-color: var(--color-accent-300);
+  transform: scale(1.05);
+}
+
+.stickerButton:active {
+  transform: scale(0.95);
+}
+
+.stickerButtonIcon {
+  font-size: 24px;
+}

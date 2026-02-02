@@ -1,0 +1,133 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.createNewButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: white;
+  background-color: var(--color-accent-500);
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.createNewButton:hover {
+  background-color: var(--color-accent-600);
+}
+
+.createNewButton svg {
+  flex-shrink: 0;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-calm-400);
+  font-size: var(--font-size-sm);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-calm-200);
+}
+
+.searchInput {
+  width: 100%;
+  padding: var(--space-3);
+  font-size: var(--font-size-base);
+  border: 1px solid var(--color-calm-200);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-calm-50);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-accent-500);
+  box-shadow: 0 0 0 2px var(--color-accent-100);
+  background-color: white;
+}
+
+.missionList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.missionOption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  background-color: white;
+  border: 1px solid var(--color-calm-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+  text-align: left;
+}
+
+.missionOption:hover {
+  border-color: var(--color-accent-400);
+  background-color: var(--color-accent-50);
+}
+
+.missionIcon {
+  flex-shrink: 0;
+  font-size: 20px;
+}
+
+.missionContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.missionTitle {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-calm-800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.missionMeta {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+}
+
+.addIcon {
+  flex-shrink: 0;
+  color: var(--color-accent-500);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-2);
+}

@@ -1,0 +1,428 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.header {
+  text-align: center;
+  padding: var(--space-2) 0;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  margin: 0;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  background-color: var(--color-calm-100);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-calm-600);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.tab.activeTab {
+  background-color: white;
+  color: var(--color-calm-800);
+  box-shadow: var(--shadow-sm);
+}
+
+.tabIcon {
+  font-size: 18px;
+}
+
+/* Sections */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Shop Card */
+.shopCard {
+  margin-top: var(--space-4);
+}
+
+.shopContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.shopIcon {
+  font-size: 32px;
+}
+
+.shopText {
+  flex: 1;
+}
+
+.shopTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.shopDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+  margin: 0;
+}
+
+/* Goal List */
+.goalList {
+  display: flex;
+  flex-direction: column;
+}
+
+.goalItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-calm-100);
+}
+
+.goalItem:last-child {
+  border-bottom: none;
+}
+
+.goalItem.completed {
+  opacity: 0.7;
+}
+
+/* Checkbox */
+.checkbox {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-calm-300);
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  margin-top: 2px;
+}
+
+.checkbox:hover:not(:disabled) {
+  border-color: var(--color-accent-500);
+  background-color: var(--color-accent-50);
+}
+
+.checkbox.checked {
+  background-color: var(--color-success-500);
+  border-color: var(--color-success-500);
+  color: white;
+  cursor: default;
+}
+
+.checkbox:disabled {
+  cursor: default;
+}
+
+/* Goal Content */
+.goalContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.goalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.goalTitle {
+  font-size: var(--font-size-base);
+  color: var(--color-calm-800);
+  line-height: 1.4;
+}
+
+.expandButton {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-calm-400);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.expandButton:hover {
+  background-color: var(--color-calm-100);
+  color: var(--color-calm-600);
+}
+
+.goalTitle.completedText {
+  color: var(--color-calm-400);
+  text-decoration: line-through;
+}
+
+.goalDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+}
+
+.goalMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-400);
+}
+
+/* Linked Missions */
+.linkedMissions {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-lg);
+}
+
+.linkedMissionsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.linkedMissionsTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-600);
+}
+
+.addMissionButton {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-accent-600);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.addMissionButton:hover {
+  background-color: var(--color-accent-50);
+  color: var(--color-accent-700);
+}
+
+.noMissions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.noMissions span {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-400);
+}
+
+.missionList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.linkedMissionItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background-color: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-calm-200);
+}
+
+.linkedMissionIcon {
+  font-size: 16px;
+}
+
+.linkedMissionTitle {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-700);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.removeMissionButton {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-calm-400);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.removeMissionButton:hover {
+  background-color: var(--color-error-50);
+  color: var(--color-error-500);
+}
+
+/* Delete Section */
+.deleteSection {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-calm-200);
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-error-500);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.deleteButton:hover {
+  background-color: var(--color-error-50);
+  color: var(--color-error-600);
+}
+
+.deleteConfirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background-color: var(--color-error-50);
+  border-radius: var(--radius-md);
+}
+
+.deleteConfirmText {
+  font-size: var(--font-size-sm);
+  color: var(--color-error-700);
+}
+
+.deleteConfirmActions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.deleteConfirmButton {
+  color: var(--color-error-600);
+}
+
+.deleteConfirmButton:hover {
+  background-color: var(--color-error-100);
+  color: var(--color-error-700);
+}
+
+/* Completed Section */
+.completedSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-500);
+  margin: 0;
+}
+
+/* Add Button */
+.addButton {
+  align-self: flex-start;
+}
+
+/* Add Form */
+.addForm {
+  margin-top: var(--space-2);
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-3);
+  font-size: var(--font-size-base);
+  border: 1px solid var(--color-calm-200);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent-500);
+  box-shadow: 0 0 0 2px var(--color-accent-100);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-3);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-calm-200);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-accent-500);
+  box-shadow: 0 0 0 2px var(--color-accent-100);
+}
+
+.addFormActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* Loading */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0;
+}

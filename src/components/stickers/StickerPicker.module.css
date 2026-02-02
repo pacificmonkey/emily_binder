@@ -1,0 +1,50 @@
+.content {
+  min-height: 200px;
+}
+
+.stickerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: var(--space-3);
+}
+
+.stickerOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--color-calm-50);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.stickerOption:hover {
+  background-color: var(--color-calm-100);
+  border-color: var(--color-accent-200);
+}
+
+.stickerOption:active {
+  transform: scale(0.95);
+}
+
+.stickerOption img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.stickerName {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-600);
+  text-align: center;
+  word-break: break-word;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8) 0;
+}

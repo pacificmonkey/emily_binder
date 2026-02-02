@@ -1,0 +1,256 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-700);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-calm-300);
+  border-radius: var(--radius-lg);
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  color: var(--color-calm-800);
+  resize: vertical;
+  min-height: 80px;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-accent-500);
+  box-shadow: 0 0 0 3px var(--color-accent-100);
+}
+
+.textarea::placeholder {
+  color: var(--color-calm-400);
+}
+
+/* Category Grid */
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+}
+
+.categoryCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background-color: white;
+  border: 2px solid var(--color-calm-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.categoryCard:hover {
+  border-color: var(--color-calm-300);
+  background-color: var(--color-calm-50);
+}
+
+.categorySelected {
+  border-color: var(--color-accent-500);
+  background-color: var(--color-accent-50);
+}
+
+.categorySelected:hover {
+  border-color: var(--color-accent-600);
+  background-color: var(--color-accent-100);
+}
+
+.categoryIcon {
+  font-size: 24px;
+}
+
+.categoryName {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-700);
+}
+
+.categoryVp {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+}
+
+/* Checkbox Field */
+.checkboxField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-lg);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-base);
+  color: var(--color-calm-800);
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent-500);
+}
+
+.checkboxHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+  margin: 0;
+  padding-left: 26px;
+}
+
+/* Recurring Options */
+.recurringOptions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-calm-200);
+}
+
+.select {
+  width: 100%;
+  padding: var(--space-3);
+  min-height: var(--touch-min);
+  font-size: var(--font-size-base);
+  color: var(--color-calm-800);
+  background-color: white;
+  border: 1px solid var(--color-calm-300);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-accent-500);
+  box-shadow: 0 0 0 3px var(--color-accent-100);
+}
+
+/* Location Type Toggle */
+.locationTypeToggle {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+}
+
+.locationTypeButton {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-600);
+  background-color: white;
+  border: 1px solid var(--color-calm-300);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.locationTypeButton:hover {
+  background-color: var(--color-calm-50);
+}
+
+.locationTypeSelected {
+  color: white;
+  background-color: var(--color-accent-500);
+  border-color: var(--color-accent-500);
+}
+
+.locationTypeSelected:hover {
+  background-color: var(--color-accent-600);
+}
+
+/* Weekday Picker */
+.weekdayPicker {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.weekdayButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-600);
+  background-color: white;
+  border: 1px solid var(--color-calm-300);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.weekdayButton:hover {
+  background-color: var(--color-calm-100);
+}
+
+.weekdaySelected {
+  color: white;
+  background-color: var(--color-accent-500);
+  border-color: var(--color-accent-500);
+}
+
+.weekdaySelected:hover {
+  background-color: var(--color-accent-600);
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+}
+
+.rightActions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.deleteButton {
+  color: var(--color-error-600);
+}
+
+.deleteButton:hover {
+  color: var(--color-error-700);
+  background-color: var(--color-error-50);
+}
+
+.deleteConfirmText {
+  font-size: var(--font-size-base);
+  color: var(--color-calm-700);
+  margin: 0;
+  padding: var(--space-4) 0;
+}

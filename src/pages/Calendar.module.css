@@ -1,0 +1,459 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  margin: 0;
+}
+
+/* View Toggle */
+.viewToggle {
+  display: flex;
+  background-color: var(--color-calm-100);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+
+.toggleButton {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-600);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.toggleButton:hover:not(.active) {
+  background-color: var(--color-calm-200);
+}
+
+.toggleButton.active {
+  background-color: white;
+  color: var(--color-calm-800);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Month Navigation */
+.monthNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  color: var(--color-calm-600);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.navButton:hover {
+  background-color: var(--color-calm-100);
+  color: var(--color-calm-800);
+}
+
+.monthLabel {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-calm-800);
+}
+
+/* Week Grid */
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-2);
+}
+
+.weekDay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background-color var(--duration-fast) var(--ease-gentle);
+}
+
+.weekDay.today {
+  background-color: var(--color-accent-100);
+}
+
+.weekDay.today .dayNumber {
+  background-color: var(--color-accent-500);
+  color: white;
+}
+
+.dayName {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+}
+
+.dayNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  border-radius: 50%;
+}
+
+/* Month Grid */
+.monthHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+}
+
+.monthDayName {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-500);
+  text-align: center;
+  padding: var(--space-2);
+}
+
+.monthGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-1);
+}
+
+.monthDay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-700);
+  border-radius: var(--radius-md);
+}
+
+.monthDay.today {
+  background-color: var(--color-accent-500);
+  color: white;
+  font-weight: 600;
+}
+
+.monthDay.otherMonth {
+  color: var(--color-calm-300);
+}
+
+/* Events Section */
+.eventsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-calm-700);
+  margin: 0;
+}
+
+/* Selected States */
+.weekDay.selected {
+  background-color: var(--color-calm-100);
+}
+
+.weekDay.selected .dayNumber {
+  background-color: var(--color-calm-700);
+  color: white;
+}
+
+.weekDay.today.selected .dayNumber {
+  background-color: var(--color-accent-600);
+}
+
+.monthDay.selected {
+  background-color: var(--color-calm-700);
+  color: white;
+  font-weight: 600;
+}
+
+.monthDay.today.selected {
+  background-color: var(--color-accent-600);
+}
+
+/* Make week/month days clickable */
+.weekDay,
+.monthDay {
+  cursor: pointer;
+}
+
+.weekDay:hover:not(.today):not(.selected) {
+  background-color: var(--color-calm-50);
+}
+
+.monthDay:hover:not(.today):not(.selected):not(.otherMonth) {
+  background-color: var(--color-calm-100);
+}
+
+/* Event Dots (indicators on calendar days) */
+.eventDots {
+  display: flex;
+  gap: 2px;
+  margin-top: var(--space-1);
+}
+
+.eventDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-accent-400);
+}
+
+.eventDotSmall {
+  position: absolute;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--color-accent-400);
+}
+
+.monthDay .eventDots {
+  position: absolute;
+  bottom: 4px;
+}
+
+.monthDay {
+  position: relative;
+}
+
+/* Events Header */
+.eventsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Events List */
+.eventsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.eventItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-calm-100);
+}
+
+.eventItem:last-child {
+  border-bottom: none;
+}
+
+.eventTime {
+  flex-shrink: 0;
+  min-width: 70px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-600);
+  padding-top: 2px;
+}
+
+.eventContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.eventTitle {
+  font-size: var(--font-size-base);
+  color: var(--color-calm-800);
+  line-height: 1.4;
+}
+
+.eventCategory {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+}
+
+.eventTitleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.eventBadges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.mandatoryBadge {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-600);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-accent-50);
+  border-radius: var(--radius-full);
+}
+
+.recurringBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-calm-500);
+  padding: var(--space-1);
+}
+
+.descriptionToggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+  padding: var(--space-1) 0;
+  background: transparent;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.descriptionToggle:hover {
+  color: var(--color-calm-700);
+}
+
+.chevronDown {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.chevronUp {
+  transition: transform var(--duration-fast) var(--ease-out);
+  transform: rotate(180deg);
+}
+
+.eventDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-600);
+  line-height: 1.5;
+  margin: 0;
+  padding: var(--space-2);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-md);
+}
+
+/* Event Metadata (location, provider, medication) */
+.eventMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.eventMetaItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+}
+
+.eventMetaIcon {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.eventMetaLink {
+  color: var(--color-accent-600);
+  text-decoration: none;
+}
+
+.eventMetaLink:hover {
+  text-decoration: underline;
+}
+
+.editButton {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--color-calm-400);
+  border-radius: var(--radius-md);
+  background: transparent;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.editButton:hover {
+  color: var(--color-calm-600);
+  background-color: var(--color-calm-100);
+}
+
+/* Empty & Loading States */
+.emptyText {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-400);
+  text-align: center;
+  margin: 0;
+  padding: var(--space-4) 0;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0;
+}
+
+/* Floating Add Button */
+.addButton {
+  position: fixed;
+  right: var(--space-4);
+  bottom: calc(80px + var(--space-4) + env(safe-area-inset-bottom, 0px));
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-accent-500);
+  color: white;
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--duration-fast) var(--ease-gentle);
+  touch-action: manipulation;
+  z-index: 10;
+}
+
+.addButton:hover {
+  background-color: var(--color-accent-600);
+  transform: scale(1.05);
+}
+
+.addButton:active {
+  transform: scale(0.95);
+}

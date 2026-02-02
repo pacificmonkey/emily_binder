@@ -1,0 +1,87 @@
+.canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.placedSticker {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  cursor: grab;
+  pointer-events: auto;
+  user-select: none;
+  transition: transform var(--duration-fast) var(--ease-gentle);
+}
+
+.placedSticker:hover {
+  filter: brightness(1.05);
+}
+
+.placedSticker.dragging {
+  cursor: grabbing;
+  opacity: 0.8;
+}
+
+.placedSticker img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.stickerMenu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  z-index: 1000;
+  min-width: 120px;
+}
+
+.menuButton {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-700);
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-gentle);
+}
+
+.menuButton:hover {
+  background-color: var(--color-calm-50);
+}
+
+.menuButton:active {
+  background-color: var(--color-calm-100);
+}
+
+.removeButton {
+  color: var(--color-error-600);
+}
+
+.removeButton:hover {
+  background-color: var(--color-error-50);
+}
+
+/* Grid Overlay */
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--color-calm-200) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-calm-200) 1px, transparent 1px);
+  opacity: 0.5;
+  z-index: -1;
+}

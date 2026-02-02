@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.track {
+  height: 4px;
+  background-color: var(--color-calm-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background-color: var(--color-accent-500);
+  border-radius: var(--radius-full);
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+.fill.complete {
+  background-color: var(--color-success-500);
+}
+
+.label {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+}

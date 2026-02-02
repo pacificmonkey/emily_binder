@@ -1,0 +1,104 @@
+.container {
+  margin-top: var(--space-2);
+}
+
+.loading {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+  text-align: center;
+  padding: var(--space-3);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--space-3);
+}
+
+.empty p {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-400);
+  margin: 0;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.timelineItem {
+  display: flex;
+  gap: var(--space-3);
+  position: relative;
+}
+
+.timelineDot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 20px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-calm-300);
+  flex-shrink: 0;
+}
+
+.dot.current {
+  background-color: var(--color-accent-500);
+}
+
+.line {
+  width: 2px;
+  flex: 1;
+  background-color: var(--color-calm-200);
+  margin: var(--space-1) 0;
+}
+
+.content {
+  flex: 1;
+  padding-bottom: var(--space-3);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.date {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-800);
+}
+
+.pillsAdded {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-success-600);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-success-50);
+  border-radius: var(--radius-full);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.detail {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+}
+
+.notes {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-600);
+  font-style: italic;
+}

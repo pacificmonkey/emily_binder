@@ -1,0 +1,18 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.message {
+  font-size: var(--font-size-base);
+  color: var(--color-calm-700);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}

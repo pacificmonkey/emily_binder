@@ -1,0 +1,646 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.header {
+  text-align: center;
+  padding: var(--space-2) 0;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  margin: 0;
+}
+
+/* Summary Card */
+.summaryCard {
+  background: linear-gradient(135deg, var(--color-accent-50), var(--color-calm-50));
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.summaryItem.remaining {
+  grid-column: span 2;
+  text-align: center;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-calm-200);
+}
+
+.summaryLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+}
+
+.summaryValue {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-calm-800);
+}
+
+.summaryValue.expense {
+  color: var(--color-calm-600);
+}
+
+.summaryValue.positive {
+  color: var(--color-success-600);
+}
+
+.summaryValue.negative {
+  color: var(--color-error-600);
+}
+
+.summaryValue.warning {
+  color: var(--color-warning-600);
+}
+
+.summaryValue.muted {
+  color: var(--color-calm-500);
+  font-size: var(--font-size-lg);
+}
+
+/* Remaining Funds Section */
+.remainingFundsSection {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-calm-200);
+}
+
+.remainingFundsTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-calm-600);
+  margin: 0 0 var(--space-3) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.remainingFundsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fundCard {
+  background-color: white;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-calm-100);
+  overflow: hidden;
+}
+
+.remainingFundItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3);
+  width: 100%;
+  text-align: left;
+  background-color: white;
+}
+
+.remainingFundItem.clickable {
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-gentle);
+}
+
+.remainingFundItem.clickable:hover {
+  background-color: var(--color-calm-50);
+}
+
+.remainingFundItem.expanded {
+  background-color: var(--color-calm-50);
+  border-bottom: 1px solid var(--color-calm-100);
+}
+
+.fundItemRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.expandIcon {
+  color: var(--color-calm-400);
+  transition: transform var(--duration-fast) var(--ease-gentle);
+}
+
+.expandedIcon {
+  transform: rotate(180deg);
+}
+
+.remainingFundLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-700);
+}
+
+.remainingFundValue {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.remainingFundValue.positive {
+  color: var(--color-success-600);
+}
+
+.remainingFundValue.negative {
+  color: var(--color-error-600);
+}
+
+.fundDetails {
+  padding: var(--space-3);
+  background-color: var(--color-calm-50);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fundDetailRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-600);
+}
+
+.fundExpensesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-calm-200);
+}
+
+.fundExpensesLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-calm-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fundExpenseItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-600);
+  padding-left: var(--space-2);
+}
+
+/* Sections */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  margin: 0;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-accent-600);
+  background-color: var(--color-accent-50);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.addButton:hover {
+  background-color: var(--color-accent-100);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  background-color: var(--color-calm-100);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-600);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.tab.activeTab {
+  background-color: white;
+  color: var(--color-calm-800);
+  box-shadow: var(--shadow-sm);
+}
+
+.tabBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: white;
+  background-color: var(--color-accent-500);
+  border-radius: var(--radius-full);
+}
+
+/* List Items */
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-calm-100);
+}
+
+.listItem:last-child {
+  border-bottom: none;
+}
+
+.listItem.paid {
+  opacity: 0.6;
+}
+
+.itemInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.itemName {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-calm-800);
+}
+
+.itemName.strikethrough {
+  text-decoration: line-through;
+  color: var(--color-calm-500);
+}
+
+.itemMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+}
+
+.itemMetaRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-600);
+  background-color: var(--color-calm-100);
+  border-radius: var(--radius-full);
+}
+
+.dueDate {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+}
+
+.itemActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.itemAmount {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  min-width: 80px;
+  text-align: right;
+}
+
+.itemAmount.strikethrough {
+  text-decoration: line-through;
+  color: var(--color-calm-500);
+}
+
+.editBtn,
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--color-calm-400);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.editBtn:hover {
+  color: var(--color-accent-600);
+  background-color: var(--color-accent-50);
+}
+
+.deleteBtn:hover {
+  color: var(--color-error-600);
+  background-color: var(--color-error-50);
+}
+
+.logBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-success-600);
+  background-color: var(--color-success-50);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.logBtn:hover {
+  background-color: var(--color-success-100);
+}
+
+.logBtn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Checkbox */
+.checkbox {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--color-calm-300);
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.checkbox:hover {
+  border-color: var(--color-success-500);
+  background-color: var(--color-success-50);
+}
+
+.checkbox.checked {
+  background-color: var(--color-success-500);
+  border-color: var(--color-success-500);
+  color: white;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-700);
+}
+
+.select {
+  width: 100%;
+  padding: var(--space-3);
+  font-size: var(--font-size-base);
+  color: var(--color-calm-800);
+  background-color: white;
+  border: 1px solid var(--color-calm-200);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-gentle);
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-accent-500);
+  box-shadow: 0 0 0 2px var(--color-accent-100);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+/* Loading */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0;
+}
+
+/* Income Category Restrictions */
+.restrictionBadge {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.categoryChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-700);
+  background-color: var(--color-accent-50);
+  border-radius: var(--radius-full);
+}
+
+.unrestrictedBadge {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+}
+
+/* Category Checkboxes */
+.fieldHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+  margin: 0;
+}
+
+.categoryCheckboxes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-md);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-700);
+}
+
+.checkboxLabel:hover {
+  color: var(--color-calm-900);
+}
+
+.checkboxInput {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent-500);
+}
+
+/* Warnings Section */
+.warningsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-calm-200);
+}
+
+.warningItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-warning-700);
+  background-color: var(--color-warning-50);
+  border-radius: var(--radius-md);
+}
+
+.warningItem svg {
+  flex-shrink: 0;
+  color: var(--color-warning-500);
+}
+
+/* Category Breakdown Section */
+.breakdownSection {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-calm-200);
+}
+
+.breakdownTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-calm-700);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.breakdownItem {
+  padding: var(--space-3);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+}
+
+.breakdownItem.generalFund {
+  background-color: var(--color-accent-50);
+}
+
+.breakdownHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.breakdownCategory {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-calm-800);
+}
+
+.breakdownSource {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+}
+
+.breakdownDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.breakdownRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-600);
+}
+
+.breakdownRow.breakdownTotal {
+  padding-top: var(--space-1);
+  border-top: 1px dashed var(--color-calm-200);
+  font-weight: 600;
+}
+
+.breakdownRow.positive {
+  color: var(--color-success-600);
+}
+
+.breakdownRow.negative {
+  color: var(--color-error-600);
+}
+
+.muted {
+  color: var(--color-calm-400);
+  font-style: italic;
+}

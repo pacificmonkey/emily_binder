@@ -1,0 +1,541 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  text-align: center;
+  padding: var(--space-2) 0;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-calm-800);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.date {
+  font-size: var(--font-size-base);
+  color: var(--color-calm-500);
+  margin: 0;
+}
+
+/* Date Navigator */
+.dateNavigator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-calm-100);
+  color: var(--color-calm-600);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.navButton:hover:not(:disabled) {
+  background-color: var(--color-calm-200);
+  color: var(--color-calm-800);
+}
+
+.navButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dateButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-lg);
+  min-width: 140px;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.dateButton:hover:not(:disabled) {
+  background-color: var(--color-calm-100);
+}
+
+.dateButton:disabled {
+  cursor: default;
+}
+
+.dateLabel {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-calm-800);
+}
+
+.todayHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent-600);
+}
+
+/* Date center container */
+.dateCenter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  position: relative;
+}
+
+/* Calendar button */
+.calendarButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-accent-50);
+  color: var(--color-accent-600);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.calendarButton:hover {
+  background-color: var(--color-accent-100);
+  color: var(--color-accent-700);
+}
+
+.calendarButton:active {
+  transform: scale(0.95);
+}
+
+/* Hidden date input */
+.hiddenDateInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* View Mode Badge */
+.viewModeBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-calm-100);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-600);
+}
+
+/* Read-only mission styling */
+.readOnly {
+  opacity: 0.85;
+}
+
+.readOnly .checkbox {
+  cursor: default;
+}
+
+.disabled {
+  cursor: default !important;
+  pointer-events: none;
+}
+
+/* Sections */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-calm-700);
+  margin: 0;
+}
+
+.showMore {
+  font-size: var(--font-size-sm);
+  color: var(--color-accent-600);
+  padding: var(--space-2);
+  margin: calc(var(--space-2) * -1);
+}
+
+.showMore:hover {
+  text-decoration: underline;
+}
+
+/* Empty state */
+.emptyText {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-400);
+  text-align: center;
+  margin: 0;
+  padding: var(--space-2) 0;
+}
+
+/* Bonus Items */
+.bonusItem,
+.bonusItemButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.bonusItemButton:hover {
+  background-color: var(--color-calm-50);
+  margin: 0 calc(var(--space-3) * -1);
+  padding: var(--space-2) var(--space-3);
+  width: calc(100% + var(--space-3) * 2);
+  border-radius: var(--radius-md);
+}
+
+.bonusIcon {
+  font-size: 20px;
+}
+
+.bonusLabel {
+  flex: 1;
+  font-size: var(--font-size-base);
+  color: var(--color-calm-700);
+}
+
+.bonusStatus {
+  font-size: var(--font-size-sm);
+  color: var(--color-success-600);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-success-50);
+  border-radius: var(--radius-full);
+}
+
+.bonusStatusCooldown {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-calm-100);
+  border-radius: var(--radius-full);
+}
+
+.bonusStatusDone {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-400);
+  padding: var(--space-1) var(--space-2);
+}
+
+/* Task Count */
+.taskCount {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-calm-100);
+  border-radius: var(--radius-full);
+}
+
+/* Daily Win Progress */
+.dailyWinBar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-lg);
+}
+
+.dailyWinLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-600);
+}
+
+.progressTrack {
+  height: 8px;
+  background-color: var(--color-calm-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--color-accent-500);
+  border-radius: var(--radius-full);
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+.progressFill.achieved {
+  background-color: var(--color-success-500);
+}
+
+/* Loading */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0;
+}
+
+/* Mission List */
+.missionList {
+  display: flex;
+  flex-direction: column;
+}
+
+.missionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-calm-100);
+}
+
+.missionItem:last-child {
+  border-bottom: none;
+}
+
+/* Checkbox */
+.checkbox {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-calm-300);
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  margin-top: 2px;
+}
+
+.checkbox:hover:not(:disabled) {
+  border-color: var(--color-accent-500);
+  background-color: var(--color-accent-50);
+}
+
+.checkbox:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+}
+
+.checkbox.checked {
+  background-color: var(--color-success-500);
+  border-color: var(--color-success-500);
+  color: white;
+  cursor: default;
+}
+
+.checkbox:disabled {
+  cursor: default;
+}
+
+/* Mission Content */
+.missionContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.missionTitle {
+  font-size: var(--font-size-base);
+  color: var(--color-calm-800);
+  line-height: 1.4;
+}
+
+.missionTitle.completed {
+  color: var(--color-calm-400);
+  text-decoration: line-through;
+}
+
+.missionCategory {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-500);
+}
+
+/* Floating Add Button */
+.addButton {
+  position: fixed;
+  right: var(--space-4);
+  bottom: calc(80px + var(--space-4) + env(safe-area-inset-bottom, 0px));
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-accent-500);
+  color: white;
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--duration-fast) var(--ease-gentle);
+  touch-action: manipulation;
+  z-index: 10;
+}
+
+.addButton:hover {
+  background-color: var(--color-accent-600);
+  transform: scale(1.05);
+}
+
+.addButton:active {
+  transform: scale(0.95);
+}
+
+/* Streaks List */
+.streaksList {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.streakItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-calm-50);
+  border-radius: var(--radius-full);
+}
+
+.streakIcon {
+  font-size: 20px;
+}
+
+.streakInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.streakCount {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-calm-800);
+}
+
+.streakBest {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+}
+
+/* Drag Handle */
+.dragHandle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 24px;
+  color: var(--color-calm-300);
+  cursor: grab;
+  touch-action: none;
+  margin-top: 2px;
+}
+
+.dragHandle:hover {
+  color: var(--color-calm-500);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+/* Event Icon */
+.eventIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 24px;
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+/* Mission Header & Title Row */
+.missionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.missionTitleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+/* Expand Button for Steps */
+.expandBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  margin: calc(var(--space-1) * -1);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  color: var(--color-calm-500);
+  font-size: var(--font-size-xs);
+  transition: all var(--duration-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.expandBtn:hover {
+  background-color: var(--color-calm-100);
+  color: var(--color-calm-700);
+}
+
+.stepBadge {
+  padding: 2px 6px;
+  background-color: var(--color-calm-100);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.chevronDown {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.chevronUp {
+  transition: transform var(--duration-fast) var(--ease-out);
+  transform: rotate(180deg);
+}
+
+/* Token Badge */
+.tokenBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-calm-100);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-calm-700);
+}
+
+.tokenIcon {
+  font-size: 14px;
+}

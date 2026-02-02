@@ -1,0 +1,38 @@
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ring {
+  transform: rotate(0deg);
+}
+
+.background {
+  fill: none;
+  stroke: var(--color-calm-200);
+}
+
+.progress {
+  fill: none;
+  stroke: var(--color-accent-500);
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--duration-normal) var(--ease-out);
+}
+
+.progress.complete {
+  stroke: var(--color-success-500);
+}
+
+.label {
+  position: absolute;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-calm-600);
+}
+
+.label.completeLabel {
+  color: var(--color-success-600);
+}

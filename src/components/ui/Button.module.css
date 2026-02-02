@@ -1,0 +1,130 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  font-size: var(--font-size-base);
+  line-height: 1;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-gentle);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Variants */
+.primary {
+  background-color: var(--color-accent-500);
+  color: white;
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--color-accent-600);
+}
+
+.secondary {
+  background-color: var(--color-calm-100);
+  color: var(--color-calm-800);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--color-calm-200);
+}
+
+.ghost {
+  background-color: transparent;
+  color: var(--color-calm-700);
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: var(--color-calm-100);
+}
+
+.danger {
+  background-color: var(--color-error-500);
+  color: white;
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--color-error-600);
+}
+
+/* Sizes */
+.sm {
+  min-height: 36px;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.md {
+  min-height: var(--touch-min);
+  padding: var(--space-3) var(--space-6);
+}
+
+.lg {
+  min-height: var(--touch-lg);
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-size-lg);
+}
+
+/* Loading state */
+.loading {
+  position: relative;
+  color: transparent;
+}
+
+.spinner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.loading .spinner {
+  color: white;
+}
+
+.loading.secondary .spinner,
+.loading.ghost .spinner {
+  color: var(--color-calm-600);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Icon */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  white-space: nowrap;
+}

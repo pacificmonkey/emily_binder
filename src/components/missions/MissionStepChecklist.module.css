@@ -1,0 +1,83 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) 0 var(--space-2) var(--space-8);
+  border-top: 1px dashed var(--color-calm-200);
+  margin-top: var(--space-2);
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.progressText {
+  font-size: var(--font-size-xs);
+  color: var(--color-calm-500);
+  white-space: nowrap;
+}
+
+.progressBar {
+  flex: 1;
+  height: 4px;
+  background-color: var(--color-calm-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--color-accent-500);
+  border-radius: var(--radius-full);
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+.stepList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.stepCheckbox {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-calm-300);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.stepCheckbox:hover {
+  border-color: var(--color-accent-500);
+  background-color: var(--color-accent-50);
+}
+
+.stepCheckbox.checked {
+  background-color: var(--color-accent-500);
+  border-color: var(--color-accent-500);
+  color: white;
+}
+
+.stepText {
+  font-size: var(--font-size-sm);
+  color: var(--color-calm-700);
+  line-height: 1.4;
+}
+
+.stepText.completed {
+  color: var(--color-calm-400);
+  text-decoration: line-through;
+}
