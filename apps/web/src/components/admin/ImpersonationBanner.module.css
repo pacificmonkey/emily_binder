@@ -1,0 +1,46 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: linear-gradient(90deg, #8b5cf6, #a855f7);
+  color: white;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.icon {
+  font-size: 16px;
+}
+
+.text {
+  font-weight: var(--font-weight-medium);
+}
+
+.text strong {
+  font-weight: var(--font-weight-bold);
+}
+
+.stopButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.stopButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.stopButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

@@ -1,0 +1,1 @@
+export { StickerOverlay } from './StickerOverlay'

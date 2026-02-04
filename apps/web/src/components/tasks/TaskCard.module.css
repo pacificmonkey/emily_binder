@@ -1,0 +1,106 @@
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.card:hover {
+  border-color: var(--color-border-hover);
+}
+
+.card.completed {
+  background: var(--color-surface-muted);
+}
+
+.card.mustDo {
+  border-left: 3px solid var(--color-accent);
+}
+
+.checkbox {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.checkbox:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+}
+
+.checkbox.checked {
+  border-color: var(--color-success);
+  background: var(--color-success);
+}
+
+.checkmark {
+  color: white;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.completed .title {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.points {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.pointsIcon {
+  font-size: 12px;
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.mustDoBadge {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+}
+
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}

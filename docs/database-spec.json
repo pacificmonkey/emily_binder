@@ -1,0 +1,1575 @@
+{
+  "schema_version": "1.3.0",
+  "security_focus_notes": [
+    "All patient-owned records MUST include workspace_id for strong row-level security (RLS) and consistent access control.",
+    "Separate audit streams: AuditEvent for mutations (create/update/delete/export/restore) and SensitiveAccessEvent for reads/views/downloads of sensitive objects.",
+    "Attachments should be stored via signed URLs; store only non-secret references (e.g., object key), plus hash/size for integrity checks.",
+    "Coins and points use append-only ledgers; cached balances/levels are derived to prevent tampering and reconcile disputes.",
+    "Role-based access control (RBAC) is explicit: permissions are enumerated and mapped to roles; avoid implicit access rules in code."
+  ],
+  "notes": [
+    "Canonical keys (task, points, coins, grace_token) are stable and never renamed.",
+    "Renameable UI text is stored in *Label* objects (RoleLabel, TaskTypeLabel, GoalTypeLabel, CurrencyLabel, PointsSystem).",
+    "Feature modules are admin-toggleable via FeatureModuleSetting (with dependency checks).",
+    "Notifications unify prior 'alerts' and general notifications into a single system.",
+    "Single-client now; Workspace enables later multi-client expansion without schema migration pain."
+  ],
+  "enums": {
+    "RoleKey": ["admin", "member", "support"],
+    "ScopeType": ["app", "workspace", "user"],
+
+    "PermissionKey": [
+      "view_all",
+      "manage_users",
+      "manage_feature_toggles",
+      "manage_tasks",
+      "manage_goals",
+      "manage_medications",
+      "manage_budget",
+      "manage_recipes",
+      "manage_store",
+      "manage_gamification",
+      "view_sensitive_health",
+      "view_sensitive_budget",
+      "view_audit",
+      "export_data",
+      "manage_security"
+    ],
+
+    "FeatureModuleKey": [
+      "tasks",
+      "goals",
+      "medications",
+      "routines",
+      "wellbeing",
+      "budget",
+      "recipes",
+      "shopping",
+      "notifications",
+      "gamification",
+      "store",
+      "attachments",
+      "audit",
+      "security"
+    ],
+
+    "TaskTypeKey": ["one_time", "recurring", "bonus"],
+    "TaskStatus": ["active", "archived"],
+    "TaskInstanceCompletionStatus": ["not_done", "done"],
+    "RecurrenceFrequency": ["daily", "weekly", "monthly", "custom"],
+    "BonusAvailability": ["daily", "weekly", "always"],
+
+    "SourceLinkType": [
+      "event",
+      "med_schedule",
+      "prescription",
+      "refill",
+      "inventory",
+      "provider_discussion_item",
+      "budget_plan_item",
+      "budget_transaction",
+      "shopping_list",
+      "routine",
+      "symptom_entry",
+      "custom"
+    ],
+
+    "GoalTypeKey": ["self_goal", "support_goal"],
+    "GoalStatus": ["draft", "submitted", "needs_changes", "approved", "active", "completed", "archived"],
+    "AutoApproveMode": ["none", "after_deadline", "after_deadline_or_due_soon"],
+    "DueKind": ["none", "date", "week", "whenever"],
+
+    "EventType": ["appointment", "social", "errand", "class", "therapy", "work", "other"],
+    "EventStatus": ["scheduled", "canceled", "completed", "no_show", "rescheduled"],
+
+    "MedicationStrengthUnit": ["mg", "mcg", "g", "mL", "IU", "%", "unit", "other"],
+    "DosageForm": ["tablet", "capsule", "liquid", "inhaler", "patch", "injection", "cream", "drops", "other"],
+    "Route": ["oral", "sublingual", "topical", "inhaled", "im", "iv", "other"],
+    "PrescriptionStatus": ["active", "paused", "completed", "discontinued"],
+    "FrequencyType": ["scheduled", "prn", "taper"],
+    "ScheduleKind": ["times_of_day", "interval", "weekly", "cyclic", "taper", "custom_rrule"],
+    "WithFood": ["none", "with_food", "empty_stomach", "avoid_dairy", "other"],
+    "InventorySource": ["computed", "manual_set", "manual_adjust", "imported"],
+    "InventoryConfidence": ["high", "medium", "low"],
+    "InventoryAdjustmentReason": ["counted", "lost", "extra", "dose_change", "travel_supply", "other"],
+    "IntakeStatus": ["taken", "skipped", "missed", "late", "partial"],
+    "RecordedBy": ["user", "caregiver", "import", "device"],
+
+    "AttachmentOwnerType": [
+      "workspace",
+      "user",
+      "task",
+      "task_instance",
+      "goal",
+      "event",
+      "medication",
+      "prescription",
+      "med_schedule",
+      "dispense",
+      "inventory",
+      "provider",
+      "pharmacy",
+      "insurance",
+      "symptom_entry",
+      "provider_discussion_item",
+      "budget_plan_item",
+      "budget_transaction",
+      "recipe",
+      "shopping_list",
+      "notification",
+      "store_item",
+      "purchase",
+      "redemption",
+      "streak_definition",
+      "custom"
+    ],
+    "AttachmentStorage": ["local", "cloud"],
+    "AttachmentAccessScope": ["patient_only", "admin_only", "care_team", "shared"],
+    "AttachmentEncryptionStatus": ["unknown", "encrypted_at_rest", "client_side_encrypted"],
+
+    "ADLCategory": ["hygiene", "meals", "hydration", "sleep", "exercise", "laundry", "cleaning", "self_care", "other"],
+    "RoutineStatus": ["active", "archived"],
+    "RoutineEventStatus": ["done", "skipped", "partial"],
+
+    "SymptomDomain": ["physical", "mental", "sensory", "sleep", "other"],
+    "SymptomSeverityScale": ["none", "mild", "moderate", "severe"],
+    "DiscussionItemStatus": ["open", "discussed", "resolved", "archived"],
+
+    "BudgetRestrictionType": ["none", "category_allowlist", "category_blocklist", "merchant_allowlist", "merchant_blocklist"],
+    "BudgetEntryStatus": ["planned", "posted", "canceled"],
+    "BudgetTransactionType": ["income", "expense", "transfer"],
+    "BudgetCadence": ["one_time", "weekly", "biweekly", "monthly", "quarterly", "yearly"],
+    "BudgetCategoryKind": ["income", "expense"],
+
+    "RecipeUnit": ["tsp", "tbsp", "cup", "oz", "lb", "g", "kg", "mL", "L", "count", "pinch", "other"],
+    "ShoppingListStatus": ["active", "completed", "archived"],
+    "ShoppingListItemStatus": ["need_to_check_home", "need_to_buy", "already_have", "purchased", "skipped"],
+
+    "TransitionBufferType": ["before_event", "after_event", "between_events", "daily_routine"],
+    "CopingActivityType": ["self_soothe", "boredom", "energy_release", "calming", "focus", "other"],
+
+    "NotificationType": [
+      "reminder",
+      "info",
+      "custom",
+      "dose_reminder",
+      "low_stock",
+      "refill_due",
+      "missed_dose",
+      "expiration",
+      "interaction_warning"
+    ],
+    "NotificationStatus": ["scheduled", "delivered", "failed", "dismissed", "acknowledged"],
+    "NotificationChannel": ["push", "sms", "email", "in_app"],
+
+    "AuditAction": ["create", "update", "delete", "export", "restore"],
+    "SensitiveAccessAction": ["view", "download", "print", "share_link_create", "share_link_open"],
+    "AuditObjectType": [
+      "workspace",
+      "workspace_membership",
+      "user",
+      "role_label",
+      "permission",
+      "role_permission",
+      "points_system",
+      "currency_label",
+      "feature_module",
+      "feature_module_setting",
+      "event",
+      "task",
+      "task_tag",
+      "task_instance",
+      "points_ledger_entry",
+      "goal",
+      "task_group",
+      "medication",
+      "prescription",
+      "med_schedule",
+      "dispense",
+      "inventory",
+      "inventory_adjustment",
+      "intake_event",
+      "provider",
+      "pharmacy",
+      "insurance",
+      "notification",
+      "renewal_plan",
+      "routine",
+      "routine_event",
+      "symptom_entry",
+      "provider_discussion_item",
+      "budget_account",
+      "budget_category",
+      "budget_plan_item",
+      "budget_transaction",
+      "recipe",
+      "recipe_ingredient",
+      "favorite_item",
+      "shopping_list",
+      "shopping_list_item",
+      "transition_buffer",
+      "coping_activity",
+      "attachment",
+      "level_system",
+      "level_curve",
+      "user_progress",
+      "coin_wallet",
+      "coin_ledger_entry",
+      "store_item",
+      "purchase",
+      "redemption",
+      "user_inventory",
+      "sticker",
+      "home_decoration",
+      "streak_definition",
+      "streak_state",
+      "streak_shield_use",
+      "auth_session",
+      "api_token"
+    ],
+
+    "CurrencyKey": ["points", "coins", "grace_token"],
+
+    "StoreItemType": ["sticker", "home_decoration", "consumable_token", "real_world_reward"],
+    "InventoryItemKind": ["cosmetic", "consumable", "entitlement"],
+    "PurchaseStatus": ["pending", "completed", "canceled", "refunded"],
+
+    "RedemptionStatus": ["requested", "approved", "denied", "fulfilled", "canceled"],
+
+    "StreakPeriod": ["daily", "weekly"],
+    "StreakTemplateKey": ["complete_n_filtered", "complete_any_filtered", "perfect_must_do"],
+    "StreakStatus": ["active", "paused", "archived"],
+    "StreakBreakBehavior": ["break", "use_token_if_available", "prompt_to_use_token"],
+    "StreakStateStatus": ["ongoing", "broken", "shielded", "paused"],
+
+    "HomeDecorationPlacementStatus": ["active", "removed"],
+
+    "DataSensitivity": ["low", "moderate", "high"],
+    "ShareLinkStatus": ["active", "revoked", "expired"]
+  },
+  "objects": {
+    "Workspace": {
+      "description": "Security boundary and future multi-client container. Single-client v1 still uses a workspace.",
+      "primary_key": "workspace_id",
+      "fields": {
+        "workspace_id": { "type": "uuid", "required": true },
+        "display_name": { "type": "string", "required": true },
+        "timezone_default": { "type": "string", "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "WorkspaceMembership": {
+      "description": "Users belong to a workspace with a role. This enables later multi-client expansion cleanly.",
+      "primary_key": "workspace_membership_id",
+      "fields": {
+        "workspace_membership_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "role_key": { "type": "string", "enum": "RoleKey", "required": true },
+        "status": { "type": "string", "enum": ["active", "inactive"], "required": true },
+        "invited_by_user_id": { "type": "uuid", "required": false, "ref": "User.user_id" },
+        "joined_at": { "type": "datetime", "required": true },
+        "revoked_at": { "type": "datetime", "required": false }
+      }
+    },
+
+    "Permission": {
+      "description": "Canonical permission list for RBAC.",
+      "primary_key": "permission_id",
+      "fields": {
+        "permission_id": { "type": "uuid", "required": true },
+        "key": { "type": "string", "enum": "PermissionKey", "required": true, "unique": true },
+        "description": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "RolePermission": {
+      "description": "Maps roles to allowed permissions; workspace-scoped overrides are supported.",
+      "primary_key": "role_permission_id",
+      "fields": {
+        "role_permission_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "role_key": { "type": "string", "enum": "RoleKey", "required": true },
+        "permission_key": { "type": "string", "enum": "PermissionKey", "required": true },
+        "allowed": { "type": "bool", "required": true },
+        "set_by_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "set_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "RoleLabel": {
+      "description": "Renameable display labels for roles (e.g., Joey/Emily/Family).",
+      "primary_key": "role_label_id",
+      "fields": {
+        "role_label_id": { "type": "uuid", "required": true },
+        "scope_type": { "type": "string", "enum": "ScopeType", "required": true },
+        "scope_id": { "type": "uuid", "required": false, "notes": "If scope_type=workspace, scope_id=workspace_id." },
+        "role_key": { "type": "string", "enum": "RoleKey", "required": true },
+        "singular_label": { "type": "string", "required": true },
+        "plural_label": { "type": "string", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "User": {
+      "description": "A person account in the app.",
+      "primary_key": "user_id",
+      "fields": {
+        "user_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "display_name": { "type": "string", "required": true },
+        "status": { "type": "string", "enum": ["active", "inactive"], "required": true },
+        "timezone": { "type": "string", "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "PatientProfile": {
+      "description": "Profile for the supported person (single-client now; can expand later).",
+      "primary_key": "patient_id",
+      "fields": {
+        "patient_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "full_name": { "type": "string", "required": true },
+        "date_of_birth": { "type": "date", "required": false },
+        "sex": { "type": "string", "required": false },
+        "allergies": { "type": "json", "required": false },
+        "conditions": { "type": "json", "required": false },
+        "timezone_default": { "type": "string", "required": true }
+      }
+    },
+
+    "FeatureModule": {
+      "description": "Canonical list of major modules, with dependencies for safe toggling.",
+      "primary_key": "feature_module_id",
+      "fields": {
+        "feature_module_id": { "type": "uuid", "required": true },
+        "key": { "type": "string", "enum": "FeatureModuleKey", "required": true, "unique": true },
+        "default_enabled": { "type": "bool", "required": true },
+        "depends_on_module_keys": { "type": "array", "required": false, "items": "string" },
+        "description": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "FeatureModuleSetting": {
+      "description": "Admin-controlled enable/disable for each module for a given workspace+patient.",
+      "primary_key": "feature_module_setting_id",
+      "fields": {
+        "feature_module_setting_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "feature_module_id": { "type": "uuid", "required": true, "ref": "FeatureModule.feature_module_id" },
+        "enabled": { "type": "bool", "required": true },
+        "set_by_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "set_at": { "type": "datetime", "required": true },
+        "notes": { "type": "text", "required": false }
+      },
+      "uniques": [
+        {
+          "fields": ["patient_id", "feature_module_id"],
+          "notes": "One setting per patient/module."
+        }
+      ]
+    },
+
+    "PointsSystem": {
+      "description": "Renameable labels for points (e.g., 'Points' vs 'Victory Points').",
+      "primary_key": "points_system_id",
+      "fields": {
+        "points_system_id": { "type": "uuid", "required": true },
+        "scope_type": { "type": "string", "enum": "ScopeType", "required": true },
+        "scope_id": { "type": "uuid", "required": false },
+        "key": { "type": "string", "required": true, "default": "points" },
+        "singular_label": { "type": "string", "required": true },
+        "plural_label": { "type": "string", "required": true },
+        "icon": { "type": "string", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "CurrencyLabel": {
+      "description": "Renameable labels for currencies (coins, grace tokens).",
+      "primary_key": "currency_label_id",
+      "fields": {
+        "currency_label_id": { "type": "uuid", "required": true },
+        "scope_type": { "type": "string", "enum": "ScopeType", "required": true },
+        "scope_id": { "type": "uuid", "required": false },
+        "currency_key": { "type": "string", "enum": "CurrencyKey", "required": true },
+        "singular_label": { "type": "string", "required": true },
+        "plural_label": { "type": "string", "required": true },
+        "icon": { "type": "string", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "LevelSystem": {
+      "description": "Points accumulate into levels. Curve can be explicit table or formula.",
+      "primary_key": "level_system_id",
+      "fields": {
+        "level_system_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "points_currency_key": { "type": "string", "enum": "CurrencyKey", "required": true, "notes": "Should be 'points'." },
+        "curve_id": { "type": "uuid", "required": true, "ref": "LevelCurve.curve_id" },
+        "max_level": { "type": "int", "required": true, "min": 1 },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "LevelCurve": {
+      "description": "Defines required cumulative points per level.",
+      "primary_key": "curve_id",
+      "fields": {
+        "curve_id": { "type": "uuid", "required": true },
+        "name": { "type": "string", "required": true },
+        "mode": { "type": "string", "enum": ["explicit_table", "formula"], "required": true },
+        "formula_config": { "type": "json", "required": false, "notes": "If formula: {base, growth, exponent, rounding}." },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "LevelCurveStep": {
+      "description": "Explicit table: required cumulative points to reach each level.",
+      "primary_key": ["curve_id", "level"],
+      "fields": {
+        "curve_id": { "type": "uuid", "required": true, "ref": "LevelCurve.curve_id" },
+        "level": { "type": "int", "required": true, "min": 1 },
+        "required_cumulative_points": { "type": "int", "required": true, "min": 0 }
+      }
+    },
+    "UserProgress": {
+      "description": "Cached progress for fast UI: derived from PointsLedgerEntry + LevelCurve.",
+      "primary_key": "user_progress_id",
+      "fields": {
+        "user_progress_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "total_points": { "type": "int", "required": true, "min": 0 },
+        "current_level": { "type": "int", "required": true, "min": 1 },
+        "points_into_level": { "type": "int", "required": true, "min": 0 },
+        "points_to_next_level": { "type": "int", "required": true, "min": 0 },
+        "last_recomputed_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "PointsLedgerEntry": {
+      "description": "Append-only ledger of points earned/spent/adjusted. TaskInstances and bonuses should write to this.",
+      "primary_key": "points_ledger_entry_id",
+      "fields": {
+        "points_ledger_entry_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "delta": { "type": "int", "required": true, "notes": "+earn / -deduct (rare; typically 0+)" },
+        "reason": { "type": "string", "required": true, "notes": "task_completion, task_group_bonus, admin_adjustment, migration_fix, other" },
+        "link_type": { "type": "string", "required": false, "notes": "task_instance, task_group_daily_result, goal, other" },
+        "link_id": { "type": "uuid", "required": false },
+        "occurred_at": { "type": "datetime", "required": true },
+        "created_by_user_id": { "type": "uuid", "required": false, "ref": "User.user_id", "notes": "Null if system-generated." },
+        "notes": { "type": "text", "required": false }
+      }
+    },
+
+    "Event": {
+      "description": "Appointments and social events. Tasks can link to events via Task.source_link_type='event'.",
+      "primary_key": "event_id",
+      "fields": {
+        "event_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "type": { "type": "string", "enum": "EventType", "required": true },
+        "title": { "type": "string", "required": true },
+        "starts_at": { "type": "datetime", "required": true },
+        "ends_at": { "type": "datetime", "required": false },
+        "timezone": { "type": "string", "required": true },
+        "location": { "type": "text", "required": false },
+        "status": { "type": "string", "enum": "EventStatus", "required": true },
+        "notes": { "type": "text", "required": false },
+        "created_by_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "TaskTypeLabel": {
+      "description": "Renameable labels for task types.",
+      "primary_key": "task_type_label_id",
+      "fields": {
+        "task_type_label_id": { "type": "uuid", "required": true },
+        "scope_type": { "type": "string", "enum": "ScopeType", "required": true },
+        "scope_id": { "type": "uuid", "required": false },
+        "task_type_key": { "type": "string", "enum": "TaskTypeKey", "required": true },
+        "singular_label": { "type": "string", "required": true },
+        "plural_label": { "type": "string", "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "TaskTag": {
+      "description": "Simple tags for tasks; can be used in streak filters and grouping.",
+      "primary_key": "task_tag_id",
+      "fields": {
+        "task_tag_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "name": { "type": "string", "required": true },
+        "color_hint": { "type": "string", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "Task": {
+      "description": "Base task definition. TaskInstances represent daily scoring.",
+      "primary_key": "task_id",
+      "fields": {
+        "task_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "title": { "type": "string", "required": true },
+        "description": { "type": "text", "required": false },
+        "points": { "type": "int", "required": true, "min": 0 },
+        "assigned_to_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "created_by_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "task_type_key": { "type": "string", "enum": "TaskTypeKey", "required": true },
+        "status": { "type": "string", "enum": "TaskStatus", "required": true },
+        "assigned_day": { "type": "date", "required": false },
+        "requires_same_day_completion": { "type": "bool", "required": true, "default": true },
+        "must_do": { "type": "bool", "required": true, "default": false },
+        "source_link_type": { "type": "string", "enum": "SourceLinkType", "required": false },
+        "source_link_id": { "type": "uuid", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "TaskTagLink": {
+      "description": "Many-to-many linking between tasks and tags.",
+      "primary_key": ["task_id", "task_tag_id"],
+      "fields": {
+        "task_id": { "type": "uuid", "required": true, "ref": "Task.task_id" },
+        "task_tag_id": { "type": "uuid", "required": true, "ref": "TaskTag.task_tag_id" },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "TaskInstance": {
+      "description": "A dated instance of a task. Writes points to PointsLedgerEntry when completed.",
+      "primary_key": "task_instance_id",
+      "fields": {
+        "task_instance_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "task_id": { "type": "uuid", "required": true, "ref": "Task.task_id" },
+        "assigned_day": { "type": "date", "required": true },
+        "completion_status": { "type": "string", "enum": "TaskInstanceCompletionStatus", "required": true },
+        "completed_at": { "type": "datetime", "required": false },
+        "points_awarded": { "type": "int", "required": true, "min": 0, "notes": "Snapshot for historical scoring; ledger is authoritative." },
+        "completion_notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "RecurrenceRule": {
+      "description": "Defines how a recurring task generates TaskInstances.",
+      "primary_key": "recurrence_rule_id",
+      "fields": {
+        "recurrence_rule_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "task_id": { "type": "uuid", "required": true, "ref": "Task.task_id" },
+        "frequency": { "type": "string", "enum": "RecurrenceFrequency", "required": true },
+        "interval": { "type": "int", "required": true, "default": 1, "min": 1 },
+        "days_of_week": { "type": "array", "required": false, "items": "string" },
+        "start_date": { "type": "date", "required": true },
+        "end_date": { "type": "date", "required": false },
+        "time_window_label": { "type": "string", "required": false },
+        "timezone": { "type": "string", "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "BonusAvailabilitySetting": {
+      "description": "Defines availability caps for bonus tasks.",
+      "primary_key": "bonus_availability_id",
+      "fields": {
+        "bonus_availability_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "task_id": { "type": "uuid", "required": true, "ref": "Task.task_id" },
+        "availability": { "type": "string", "enum": "BonusAvailability", "required": true },
+        "cap_timezone": { "type": "string", "required": true },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "TaskGroup": {
+      "description": "A named group of tasks that awards bonus points if N tasks are completed on a day.",
+      "primary_key": "task_group_id",
+      "fields": {
+        "task_group_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "name": { "type": "string", "required": true },
+        "description": { "type": "text", "required": false },
+        "threshold_count": { "type": "int", "required": true, "min": 1 },
+        "bonus_points": { "type": "int", "required": true, "min": 0 },
+        "status": { "type": "string", "enum": ["active", "archived"], "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "TaskGroupTaskLink": {
+      "description": "Membership link between TaskGroup and Task.",
+      "primary_key": ["task_group_id", "task_id"],
+      "fields": {
+        "task_group_id": { "type": "uuid", "required": true, "ref": "TaskGroup.task_group_id" },
+        "task_id": { "type": "uuid", "required": true, "ref": "Task.task_id" },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "TaskGroupDailyResult": {
+      "description": "Daily evaluation for group bonus points. Writes to PointsLedgerEntry when awarded.",
+      "primary_key": "result_id",
+      "fields": {
+        "result_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "task_group_id": { "type": "uuid", "required": true, "ref": "TaskGroup.task_group_id" },
+        "day": { "type": "date", "required": true },
+        "completed_count": { "type": "int", "required": true, "min": 0 },
+        "threshold_met": { "type": "bool", "required": true },
+        "bonus_points_awarded": { "type": "int", "required": true, "min": 0 },
+        "awarded_at": { "type": "datetime", "required": false }
+      }
+    },
+
+    "GoalTypeLabel": {
+      "description": "Renameable labels for goal types.",
+      "primary_key": "goal_type_label_id",
+      "fields": {
+        "goal_type_label_id": { "type": "uuid", "required": true },
+        "scope_type": { "type": "string", "enum": "ScopeType", "required": true },
+        "scope_id": { "type": "uuid", "required": false },
+        "goal_type_key": { "type": "string", "enum": "GoalTypeKey", "required": true },
+        "singular_label": { "type": "string", "required": true },
+        "plural_label": { "type": "string", "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "Goal": {
+      "description": "Generic goal/project with approval workflow and optional decay.",
+      "primary_key": "goal_id",
+      "fields": {
+        "goal_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "goal_type_key": { "type": "string", "enum": "GoalTypeKey", "required": true },
+        "title": { "type": "string", "required": true },
+        "goal_text": { "type": "text", "required": true },
+        "notes": { "type": "text", "required": false },
+        "points_suggested": { "type": "int", "required": false, "min": 0 },
+        "points_approved": { "type": "int", "required": false, "min": 0 },
+        "status": { "type": "string", "enum": "GoalStatus", "required": true },
+        "created_by_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "assigned_to_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "submitted_at": { "type": "datetime", "required": false },
+        "primary_reviewer_user_id": { "type": "uuid", "required": false, "ref": "User.user_id" },
+        "approval_deadline_at": { "type": "datetime", "required": false },
+        "escalation_deadline_at": { "type": "datetime", "required": false },
+        "auto_approve_mode": { "type": "string", "enum": "AutoApproveMode", "required": true },
+        "approved_by_user_id": { "type": "uuid", "required": false, "ref": "User.user_id" },
+        "approved_at": { "type": "datetime", "required": false },
+        "due_kind": { "type": "string", "enum": "DueKind", "required": true },
+        "due_date": { "type": "date", "required": false },
+        "due_week": { "type": "string", "required": false },
+        "decay_enabled": { "type": "bool", "required": true, "default": false },
+        "decay_points_per_week": { "type": "int", "required": false, "min": 0 },
+        "min_points_floor": { "type": "int", "required": false, "min": 0 },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "GoalTaskLink": {
+      "description": "Connects a goal to its component tasks.",
+      "primary_key": ["goal_id", "task_id"],
+      "fields": {
+        "goal_id": { "type": "uuid", "required": true, "ref": "Goal.goal_id" },
+        "task_id": { "type": "uuid", "required": true, "ref": "Task.task_id" },
+        "sort_order": { "type": "int", "required": false },
+        "is_required": { "type": "bool", "required": true, "default": true }
+      }
+    },
+
+    "Medication": {
+      "description": "Drug/product concept. One Medication can be used by many Prescriptions.",
+      "primary_key": "medication_id",
+      "fields": {
+        "medication_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "display_name": { "type": "string", "required": true },
+        "generic_name": { "type": "string", "required": false },
+        "brand_name": { "type": "string", "required": false },
+        "strength_value": { "type": "number", "required": false },
+        "strength_unit": { "type": "string", "enum": "MedicationStrengthUnit", "required": true },
+        "dosage_form": { "type": "string", "enum": "DosageForm", "required": true },
+        "route": { "type": "string", "enum": "Route", "required": true },
+        "rxnorm_code": { "type": "string", "required": false },
+        "ndc": { "type": "string", "required": false },
+        "notes": { "type": "text", "required": false },
+        "is_prn_capable": { "type": "bool", "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "Prescription": {
+      "description": "Patient-specific medication order/recommendation. Tracks instructions, schedule, refills, prescriber, pharmacy.",
+      "primary_key": "prescription_id",
+      "fields": {
+        "prescription_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "medication_id": { "type": "uuid", "required": true, "ref": "Medication.medication_id" },
+        "status": { "type": "string", "enum": "PrescriptionStatus", "required": true },
+        "start_date": { "type": "date", "required": false },
+        "end_date": { "type": "date", "required": false },
+        "instructions_sig": { "type": "text", "required": true },
+        "indication": { "type": "text", "required": false },
+        "dose_quantity": { "type": "number", "required": true },
+        "dose_unit": { "type": "string", "required": true },
+        "frequency_type": { "type": "string", "enum": "FrequencyType", "required": true },
+        "prn_reason": { "type": "text", "required": false },
+        "max_doses_per_day": { "type": "number", "required": false },
+        "prescriber_id": { "type": "uuid", "required": false, "ref": "Provider.provider_id" },
+        "pharmacy_id": { "type": "uuid", "required": false, "ref": "Pharmacy.pharmacy_id" },
+        "written_date": { "type": "date", "required": false },
+        "rx_number": { "type": "string", "required": false },
+        "substitution_allowed": { "type": "bool", "required": false },
+        "notes": { "type": "text", "required": false },
+        "last_verified_at": { "type": "datetime", "required": false },
+        "refills_authorized": { "type": "int", "required": false, "min": 0 },
+        "refills_remaining_current": { "type": "int", "required": false, "min": 0 },
+        "refill_expiration_date": { "type": "date", "required": false },
+        "last_filled_at": { "type": "datetime", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "MedicationSchedule": {
+      "description": "Structured schedule for reminders and consumption planning; supports multiple blocks per prescription.",
+      "primary_key": "schedule_id",
+      "fields": {
+        "schedule_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "prescription_id": { "type": "uuid", "required": true, "ref": "Prescription.prescription_id" },
+        "schedule_kind": { "type": "string", "enum": "ScheduleKind", "required": true },
+        "times": { "type": "array", "required": false, "items": "time" },
+        "interval_hours": { "type": "int", "required": false },
+        "days_of_week": { "type": "array", "required": false, "items": "string" },
+        "dose_quantity_override": { "type": "number", "required": false },
+        "with_food": { "type": "string", "enum": "WithFood", "required": false },
+        "timezone": { "type": "string", "required": true },
+        "starts_at": { "type": "datetime", "required": false },
+        "ends_at": { "type": "datetime", "required": false },
+        "reminder_enabled": { "type": "bool", "required": true },
+        "reminder_lead_minutes": { "type": "int", "required": false },
+        "instructions_short": { "type": "string", "required": false },
+        "rrule": { "type": "string", "required": false },
+        "exceptions": { "type": "json", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "Dispense": {
+      "description": "Each pharmacy fill event for a prescription.",
+      "primary_key": "dispense_id",
+      "fields": {
+        "dispense_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "prescription_id": { "type": "uuid", "required": true, "ref": "Prescription.prescription_id" },
+        "filled_at": { "type": "datetime", "required": true },
+        "quantity_dispensed": { "type": "number", "required": true },
+        "quantity_unit": { "type": "string", "required": true },
+        "days_supply": { "type": "int", "required": false },
+        "refills_remaining_after": { "type": "int", "required": false, "min": 0 },
+        "lot_number": { "type": "string", "required": false },
+        "expiration_date": { "type": "date", "required": false },
+        "pharmacy_id": { "type": "uuid", "required": false, "ref": "Pharmacy.pharmacy_id" },
+        "cost": { "type": "number", "required": false },
+        "insurance_claim_id": { "type": "uuid", "required": false, "ref": "InsuranceClaim.insurance_claim_id" },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "Inventory": {
+      "description": "Explainable on-hand quantity per prescription.",
+      "primary_key": "inventory_id",
+      "fields": {
+        "inventory_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "prescription_id": { "type": "uuid", "required": true, "ref": "Prescription.prescription_id" },
+        "current_on_hand": { "type": "number", "required": true },
+        "as_of": { "type": "datetime", "required": true },
+        "source": { "type": "string", "enum": "InventorySource", "required": true },
+        "confidence": { "type": "string", "enum": "InventoryConfidence", "required": true },
+        "low_stock_threshold": { "type": "number", "required": false },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "InventoryAdjustment": {
+      "description": "Manual/system adjustments to inventory quantities.",
+      "primary_key": "adjustment_id",
+      "fields": {
+        "adjustment_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "prescription_id": { "type": "uuid", "required": true, "ref": "Prescription.prescription_id" },
+        "delta": { "type": "number", "required": true },
+        "reason": { "type": "string", "enum": "InventoryAdjustmentReason", "required": true },
+        "occurred_at": { "type": "datetime", "required": true },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "IntakeEvent": {
+      "description": "Medication intake log entries.",
+      "primary_key": "event_id",
+      "fields": {
+        "event_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "prescription_id": { "type": "uuid", "required": true, "ref": "Prescription.prescription_id" },
+        "scheduled_time": { "type": "datetime", "required": false },
+        "taken_time": { "type": "datetime", "required": false },
+        "status": { "type": "string", "enum": "IntakeStatus", "required": true },
+        "dose_quantity": { "type": "number", "required": true },
+        "dose_unit": { "type": "string", "required": true },
+        "reason": { "type": "text", "required": false },
+        "side_effects": { "type": "text", "required": false },
+        "notes": { "type": "text", "required": false },
+        "recorded_by": { "type": "string", "enum": "RecordedBy", "required": true },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "Provider": {
+      "description": "Medical provider / prescriber / therapist contact.",
+      "primary_key": "provider_id",
+      "fields": {
+        "provider_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "full_name": { "type": "string", "required": true },
+        "specialty": { "type": "string", "required": false },
+        "organization": { "type": "string", "required": false },
+        "phone": { "type": "string", "required": false },
+        "fax": { "type": "string", "required": false },
+        "email": { "type": "string", "required": false },
+        "address": { "type": "json", "required": false },
+        "npi": { "type": "string", "required": false },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "Pharmacy": {
+      "description": "Pharmacy contact/location.",
+      "primary_key": "pharmacy_id",
+      "fields": {
+        "pharmacy_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "name": { "type": "string", "required": true },
+        "phone": { "type": "string", "required": false },
+        "address": { "type": "json", "required": false },
+        "store_number": { "type": "string", "required": false },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "Insurance": {
+      "description": "Insurance profile for coordination.",
+      "primary_key": "insurance_id",
+      "fields": {
+        "insurance_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "payer_name": { "type": "string", "required": true },
+        "member_id": { "type": "string", "required": false },
+        "group_number": { "type": "string", "required": false },
+        "rx_bin": { "type": "string", "required": false },
+        "rx_pcn": { "type": "string", "required": false },
+        "rx_group": { "type": "string", "required": false },
+        "phone": { "type": "string", "required": false },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "InsuranceClaim": {
+      "description": "Minimal placeholder to link dispense costs/coverage.",
+      "primary_key": "insurance_claim_id",
+      "fields": {
+        "insurance_claim_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "insurance_id": { "type": "uuid", "required": false, "ref": "Insurance.insurance_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "claim_reference": { "type": "string", "required": false },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "Notification": {
+      "description": "Unified delivery object for reminders/alerts/info. Replaces prior Alert table.",
+      "primary_key": "notification_id",
+      "fields": {
+        "notification_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "type": { "type": "string", "enum": "NotificationType", "required": true },
+        "title": { "type": "string", "required": true },
+        "body": { "type": "text", "required": false },
+        "channel": { "type": "string", "enum": "NotificationChannel", "required": true },
+        "status": { "type": "string", "enum": "NotificationStatus", "required": true },
+        "scheduled_for": { "type": "datetime", "required": false },
+        "delivered_at": { "type": "datetime", "required": false },
+        "acknowledged_at": { "type": "datetime", "required": false },
+        "snooze_until": { "type": "datetime", "required": false },
+        "quiet_hours": { "type": "json", "required": false },
+        "link_type": { "type": "string", "required": false, "notes": "event/prescription/med_schedule/task/task_instance/etc." },
+        "link_id": { "type": "uuid", "required": false },
+        "payload": { "type": "json", "required": false },
+        "created_by_user_id": { "type": "uuid", "required": false, "ref": "User.user_id", "notes": "Null if system-generated." },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "RenewalPlan": {
+      "description": "Plans and scripts for renewals/refills.",
+      "primary_key": "renewal_plan_id",
+      "fields": {
+        "renewal_plan_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "prescription_id": { "type": "uuid", "required": false, "ref": "Prescription.prescription_id" },
+        "title": { "type": "string", "required": true },
+        "purpose": { "type": "text", "required": false },
+        "preferred_contact_type": { "type": "string", "required": false },
+        "preferred_contact_id": { "type": "uuid", "required": false },
+        "script_text": { "type": "text", "required": false },
+        "notes": { "type": "text", "required": false },
+        "status": { "type": "string", "enum": ["active", "archived"], "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "RenewalPlanStep": {
+      "description": "Ordered checklist steps for a renewal plan.",
+      "primary_key": "step_id",
+      "fields": {
+        "step_id": { "type": "uuid", "required": true },
+        "renewal_plan_id": { "type": "uuid", "required": true, "ref": "RenewalPlan.renewal_plan_id" },
+        "sort_order": { "type": "int", "required": true, "min": 1 },
+        "instruction": { "type": "text", "required": true },
+        "callout_script": { "type": "text", "required": false },
+        "is_required": { "type": "bool", "required": true, "default": true },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "RenewalAttempt": {
+      "description": "Log of attempts to contact pharmacy/provider for refills/renewals.",
+      "primary_key": "attempt_id",
+      "fields": {
+        "attempt_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "renewal_plan_id": { "type": "uuid", "required": false, "ref": "RenewalPlan.renewal_plan_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "prescription_id": { "type": "uuid", "required": false, "ref": "Prescription.prescription_id" },
+        "contact_type": { "type": "string", "required": true },
+        "contact_id": { "type": "uuid", "required": false },
+        "method": { "type": "string", "required": true },
+        "outcome": { "type": "string", "required": true },
+        "notes": { "type": "text", "required": false },
+        "occurred_at": { "type": "datetime", "required": true },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "Routine": {
+      "description": "ADLs/routines templates.",
+      "primary_key": "routine_id",
+      "fields": {
+        "routine_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "title": { "type": "string", "required": true },
+        "category": { "type": "string", "enum": "ADLCategory", "required": true },
+        "description": { "type": "text", "required": false },
+        "schedule_hint": { "type": "json", "required": false },
+        "status": { "type": "string", "enum": "RoutineStatus", "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "RoutineEvent": {
+      "description": "Log of doing a routine.",
+      "primary_key": "routine_event_id",
+      "fields": {
+        "routine_event_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "routine_id": { "type": "uuid", "required": true, "ref": "Routine.routine_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "occurred_at": { "type": "datetime", "required": true },
+        "status": { "type": "string", "enum": "RoutineEventStatus", "required": true },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "SymptomEntry": {
+      "description": "Symptoms & wellbeing log.",
+      "primary_key": "symptom_entry_id",
+      "fields": {
+        "symptom_entry_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "domain": { "type": "string", "enum": "SymptomDomain", "required": true },
+        "label": { "type": "string", "required": true },
+        "severity": { "type": "string", "enum": "SymptomSeverityScale", "required": true },
+        "occurred_at": { "type": "datetime", "required": true },
+        "duration_minutes": { "type": "int", "required": false, "min": 0 },
+        "possible_trigger": { "type": "text", "required": false },
+        "what_helped": { "type": "text", "required": false },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "ProviderDiscussionItem": {
+      "description": "Items to bring up with a provider.",
+      "primary_key": "discussion_item_id",
+      "fields": {
+        "discussion_item_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "title": { "type": "string", "required": true },
+        "details": { "type": "text", "required": false },
+        "status": { "type": "string", "enum": "DiscussionItemStatus", "required": true },
+        "linked_provider_id": { "type": "uuid", "required": false, "ref": "Provider.provider_id" },
+        "linked_prescription_id": { "type": "uuid", "required": false, "ref": "Prescription.prescription_id" },
+        "linked_symptom_entry_id": { "type": "uuid", "required": false, "ref": "SymptomEntry.symptom_entry_id" },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "BudgetAccount": {
+      "description": "Accounts/income sources with spending restrictions (e.g., SNAP).",
+      "primary_key": "budget_account_id",
+      "fields": {
+        "budget_account_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "name": { "type": "string", "required": true },
+        "restriction_type": { "type": "string", "enum": "BudgetRestrictionType", "required": true },
+        "restriction_rules": { "type": "json", "required": false },
+        "notes": { "type": "text", "required": false },
+        "status": { "type": "string", "enum": ["active", "archived"], "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "BudgetCategory": {
+      "description": "Budget categories.",
+      "primary_key": "budget_category_id",
+      "fields": {
+        "budget_category_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "name": { "type": "string", "required": true },
+        "kind": { "type": "string", "enum": "BudgetCategoryKind", "required": true },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "BudgetPlanItem": {
+      "description": "Planned income/expense items.",
+      "primary_key": "budget_plan_item_id",
+      "fields": {
+        "budget_plan_item_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "type": { "type": "string", "enum": "BudgetTransactionType", "required": true },
+        "title": { "type": "string", "required": true },
+        "category_id": { "type": "uuid", "required": true, "ref": "BudgetCategory.budget_category_id" },
+        "account_id": { "type": "uuid", "required": false, "ref": "BudgetAccount.budget_account_id" },
+        "amount": { "type": "number", "required": true },
+        "cadence": { "type": "string", "enum": "BudgetCadence", "required": true },
+        "next_due_date": { "type": "date", "required": false },
+        "status": { "type": "string", "enum": ["active", "paused", "archived"], "required": true },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "BudgetTransaction": {
+      "description": "Actual income/expense entries.",
+      "primary_key": "budget_transaction_id",
+      "fields": {
+        "budget_transaction_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "type": { "type": "string", "enum": "BudgetTransactionType", "required": true },
+        "title": { "type": "string", "required": true },
+        "category_id": { "type": "uuid", "required": true, "ref": "BudgetCategory.budget_category_id" },
+        "account_id": { "type": "uuid", "required": true, "ref": "BudgetAccount.budget_account_id" },
+        "amount": { "type": "number", "required": true },
+        "occurred_at": { "type": "datetime", "required": true },
+        "status": { "type": "string", "enum": "BudgetEntryStatus", "required": true },
+        "linked_plan_item_id": { "type": "uuid", "required": false, "ref": "BudgetPlanItem.budget_plan_item_id" },
+        "merchant": { "type": "string", "required": false },
+        "notes": { "type": "text", "required": false },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "Recipe": {
+      "description": "Recipe book entry.",
+      "primary_key": "recipe_id",
+      "fields": {
+        "recipe_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "title": { "type": "string", "required": true },
+        "description": { "type": "text", "required": false },
+        "instructions": { "type": "text", "required": false },
+        "servings": { "type": "int", "required": false, "min": 1 },
+        "prep_minutes": { "type": "int", "required": false, "min": 0 },
+        "cook_minutes": { "type": "int", "required": false, "min": 0 },
+        "tags": { "type": "array", "required": false, "items": "string" },
+        "is_favorite": { "type": "bool", "required": true, "default": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "RecipeIngredient": {
+      "description": "Ingredients per recipe.",
+      "primary_key": "recipe_ingredient_id",
+      "fields": {
+        "recipe_ingredient_id": { "type": "uuid", "required": true },
+        "recipe_id": { "type": "uuid", "required": true, "ref": "Recipe.recipe_id" },
+        "name": { "type": "string", "required": true },
+        "quantity": { "type": "number", "required": false },
+        "unit": { "type": "string", "enum": "RecipeUnit", "required": false },
+        "notes": { "type": "text", "required": false },
+        "sort_order": { "type": "int", "required": false },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "FavoriteItem": {
+      "description": "Staple items for shopping lists (non-recipe).",
+      "primary_key": "favorite_item_id",
+      "fields": {
+        "favorite_item_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "name": { "type": "string", "required": true },
+        "default_quantity": { "type": "number", "required": false },
+        "default_unit": { "type": "string", "required": false },
+        "category_hint": { "type": "string", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "ShoppingList": {
+      "description": "Shopping list generated from recipes + favorites.",
+      "primary_key": "shopping_list_id",
+      "fields": {
+        "shopping_list_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "title": { "type": "string", "required": true },
+        "status": { "type": "string", "enum": "ShoppingListStatus", "required": true },
+        "created_from": { "type": "json", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "ShoppingListItem": {
+      "description": "Items on a shopping list with two-stage checkoff.",
+      "primary_key": "shopping_list_item_id",
+      "fields": {
+        "shopping_list_item_id": { "type": "uuid", "required": true },
+        "shopping_list_id": { "type": "uuid", "required": true, "ref": "ShoppingList.shopping_list_id" },
+        "name": { "type": "string", "required": true },
+        "quantity": { "type": "number", "required": false },
+        "unit": { "type": "string", "required": false },
+        "status": { "type": "string", "enum": "ShoppingListItemStatus", "required": true },
+        "category_hint": { "type": "string", "required": false },
+        "notes": { "type": "text", "required": false },
+        "source": { "type": "json", "required": false },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "TransitionBuffer": {
+      "description": "Transition buffers for planning. Can be applied to events via rules or manual selection.",
+      "primary_key": "transition_buffer_id",
+      "fields": {
+        "transition_buffer_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "type": { "type": "string", "enum": "TransitionBufferType", "required": true },
+        "title": { "type": "string", "required": true },
+        "minutes": { "type": "int", "required": true, "min": 0 },
+        "notes": { "type": "text", "required": false },
+        "applies_to": { "type": "json", "required": false, "notes": "Rules by event type/time/etc." },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "CopingActivity": {
+      "description": "Self-soothing / boredom activities with quick instructions.",
+      "primary_key": "coping_activity_id",
+      "fields": {
+        "coping_activity_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "type": { "type": "string", "enum": "CopingActivityType", "required": true },
+        "title": { "type": "string", "required": true },
+        "instructions": { "type": "text", "required": false },
+        "estimated_minutes": { "type": "int", "required": false, "min": 0 },
+        "tags": { "type": "array", "required": false, "items": "string" },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "Attachment": {
+      "description": "Files/photos associated with records. Designed for secure storage and access control.",
+      "primary_key": "attachment_id",
+      "fields": {
+        "attachment_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "owner_type": { "type": "string", "enum": "AttachmentOwnerType", "required": true },
+        "owner_id": { "type": "uuid", "required": true },
+        "storage": { "type": "string", "enum": "AttachmentStorage", "required": true },
+        "object_key": { "type": "string", "required": true, "notes": "Non-secret storage reference (e.g., bucket key). Do NOT store long-lived public URLs." },
+        "mime_type": { "type": "string", "required": true },
+        "file_size_bytes": { "type": "int", "required": false, "min": 0 },
+        "content_sha256": { "type": "string", "required": false, "notes": "Integrity check; helps detect corruption/tampering." },
+        "encryption_status": { "type": "string", "enum": "AttachmentEncryptionStatus", "required": true },
+        "access_scope": { "type": "string", "enum": "AttachmentAccessScope", "required": true },
+        "title": { "type": "string", "required": false },
+        "notes": { "type": "text", "required": false },
+        "captured_at": { "type": "datetime", "required": false },
+        "created_by_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "ShareLink": {
+      "description": "Optional secure share links for attachments (short-lived, revocable).",
+      "primary_key": "share_link_id",
+      "fields": {
+        "share_link_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "attachment_id": { "type": "uuid", "required": true, "ref": "Attachment.attachment_id" },
+        "status": { "type": "string", "enum": "ShareLinkStatus", "required": true },
+        "expires_at": { "type": "datetime", "required": true },
+        "revoked_at": { "type": "datetime", "required": false },
+        "created_by_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+
+    "AuditEvent": {
+      "description": "Mutation audit log (create/update/delete/export/restore). No view logging here to reduce noise.",
+      "primary_key": "audit_event_id",
+      "fields": {
+        "audit_event_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "actor_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "object_type": { "type": "string", "enum": "AuditObjectType", "required": true },
+        "object_id": { "type": "uuid", "required": true },
+        "action": { "type": "string", "enum": "AuditAction", "required": true },
+        "occurred_at": { "type": "datetime", "required": true },
+        "ip_address": { "type": "string", "required": false },
+        "user_agent": { "type": "string", "required": false },
+        "field_changes": { "type": "json", "required": false, "notes": "For update: {field: {old, new}}. Consider redaction for sensitive fields." },
+        "notes": { "type": "text", "required": false }
+      }
+    },
+    "SensitiveAccessEvent": {
+      "description": "Read/view/download audit for sensitive objects (health/budget/attachments). This is the security emphasis layer.",
+      "primary_key": "sensitive_access_event_id",
+      "fields": {
+        "sensitive_access_event_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "actor_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "object_type": { "type": "string", "enum": "AuditObjectType", "required": true },
+        "object_id": { "type": "uuid", "required": true },
+        "action": { "type": "string", "enum": "SensitiveAccessAction", "required": true },
+        "sensitivity": { "type": "string", "enum": "DataSensitivity", "required": true },
+        "occurred_at": { "type": "datetime", "required": true },
+        "ip_address": { "type": "string", "required": false },
+        "user_agent": { "type": "string", "required": false },
+        "notes": { "type": "text", "required": false }
+      }
+    },
+
+    "CoinWallet": {
+      "description": "Cached coin balance; authoritative source is CoinLedgerEntry.",
+      "primary_key": "coin_wallet_id",
+      "fields": {
+        "coin_wallet_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "balance": { "type": "int", "required": true, "min": 0 },
+        "last_recomputed_at": { "type": "datetime", "required": true }
+      }
+    },
+    "CoinLedgerEntry": {
+      "description": "Append-only ledger of coin earns/spends.",
+      "primary_key": "coin_ledger_entry_id",
+      "fields": {
+        "coin_ledger_entry_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "delta": { "type": "int", "required": true, "notes": "+earn / -spend" },
+        "reason": { "type": "string", "required": true, "notes": "streak_reward, purchase, admin_adjustment, refund, other" },
+        "link_type": { "type": "string", "required": false },
+        "link_id": { "type": "uuid", "required": false },
+        "notes": { "type": "text", "required": false },
+        "occurred_at": { "type": "datetime", "required": true },
+        "created_by_user_id": { "type": "uuid", "required": false, "ref": "User.user_id", "notes": "Null if system-generated." }
+      }
+    },
+
+    "StoreItem": {
+      "description": "Admin-curated store catalog; items can be enabled/disabled per patient.",
+      "primary_key": "store_item_id",
+      "fields": {
+        "store_item_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "type": { "type": "string", "enum": "StoreItemType", "required": true },
+        "name": { "type": "string", "required": true },
+        "description": { "type": "text", "required": false },
+        "enabled": { "type": "bool", "required": true },
+        "coin_cost": { "type": "int", "required": true, "min": 0 },
+        "inventory_kind": { "type": "string", "enum": "InventoryItemKind", "required": true },
+        "max_purchases_total": { "type": "int", "required": false, "min": 1 },
+        "max_purchases_per_month": { "type": "int", "required": false, "min": 1 },
+        "metadata": { "type": "json", "required": false, "notes": "Type-specific: sticker asset, reward instructions, token identity (e.g., grace_token)." },
+        "created_by_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "Purchase": {
+      "description": "A purchase record for a store item (coins spent).",
+      "primary_key": "purchase_id",
+      "fields": {
+        "purchase_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "store_item_id": { "type": "uuid", "required": true, "ref": "StoreItem.store_item_id" },
+        "quantity": { "type": "int", "required": true, "min": 1 },
+        "coin_cost_total": { "type": "int", "required": true, "min": 0 },
+        "status": { "type": "string", "enum": "PurchaseStatus", "required": true },
+        "purchased_at": { "type": "datetime", "required": true },
+        "notes": { "type": "text", "required": false }
+      }
+    },
+    "Redemption": {
+      "description": "Fulfillment workflow for real-world rewards (and optional approval gates).",
+      "primary_key": "redemption_id",
+      "fields": {
+        "redemption_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "purchase_id": { "type": "uuid", "required": true, "ref": "Purchase.purchase_id" },
+        "store_item_id": { "type": "uuid", "required": true, "ref": "StoreItem.store_item_id" },
+        "status": { "type": "string", "enum": "RedemptionStatus", "required": true },
+        "requested_at": { "type": "datetime", "required": true },
+        "approved_by_user_id": { "type": "uuid", "required": false, "ref": "User.user_id" },
+        "approved_at": { "type": "datetime", "required": false },
+        "denied_by_user_id": { "type": "uuid", "required": false, "ref": "User.user_id" },
+        "denied_at": { "type": "datetime", "required": false },
+        "fulfilled_by_user_id": { "type": "uuid", "required": false, "ref": "User.user_id" },
+        "fulfilled_at": { "type": "datetime", "required": false },
+        "notes": { "type": "text", "required": false }
+      }
+    },
+    "UserInventory": {
+      "description": "What the user owns (tokens, stickers, entitlements).",
+      "primary_key": "user_inventory_id",
+      "fields": {
+        "user_inventory_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "store_item_id": { "type": "uuid", "required": true, "ref": "StoreItem.store_item_id" },
+        "kind": { "type": "string", "enum": "InventoryItemKind", "required": true },
+        "quantity": { "type": "int", "required": true, "min": 0 },
+        "acquired_at": { "type": "datetime", "required": true },
+        "expires_at": { "type": "datetime", "required": false },
+        "metadata": { "type": "json", "required": false }
+      }
+    },
+
+    "Sticker": {
+      "description": "Sticker asset definition (typically referenced by StoreItem metadata).",
+      "primary_key": "sticker_id",
+      "fields": {
+        "sticker_id": { "type": "uuid", "required": true },
+        "store_item_id": { "type": "uuid", "required": true, "ref": "StoreItem.store_item_id" },
+        "asset_key": { "type": "string", "required": true },
+        "default_scale": { "type": "number", "required": false },
+        "tags": { "type": "array", "required": false, "items": "string" },
+        "created_at": { "type": "datetime", "required": true }
+      }
+    },
+    "HomeDecoration": {
+      "description": "Placed decorative items on the home page (stickers or other decorations).",
+      "primary_key": "home_decoration_id",
+      "fields": {
+        "home_decoration_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "store_item_id": { "type": "uuid", "required": true, "ref": "StoreItem.store_item_id" },
+        "status": { "type": "string", "enum": "HomeDecorationPlacementStatus", "required": true },
+        "position": { "type": "json", "required": true, "notes": "{x, y} normalized 0..1 or pixels" },
+        "rotation": { "type": "number", "required": false },
+        "scale": { "type": "number", "required": false },
+        "z_index": { "type": "int", "required": false },
+        "placed_at": { "type": "datetime", "required": true },
+        "removed_at": { "type": "datetime", "required": false }
+      }
+    },
+
+    "StreakDefinition": {
+      "description": "Admin-configured streaks from templates + filters, awarding coins; supports token shielding.",
+      "primary_key": "streak_definition_id",
+      "fields": {
+        "streak_definition_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "name": { "type": "string", "required": true },
+        "status": { "type": "string", "enum": "StreakStatus", "required": true },
+        "template_key": { "type": "string", "enum": "StreakTemplateKey", "required": true },
+        "period": { "type": "string", "enum": "StreakPeriod", "required": true },
+        "threshold_n": { "type": "int", "required": false, "min": 1 },
+        "filter": {
+          "type": "json",
+          "required": false,
+          "notes": "Pick-from-list constraints: {task_group_ids[], task_type_keys[], task_tag_ids[], source_link_types[], task_allowlist_ids[]}"
+        },
+        "coins_per_period": { "type": "int", "required": true, "min": 0 },
+        "milestones": { "type": "json", "required": false, "notes": "List of {count, bonus_coins}." },
+        "break_behavior": { "type": "string", "enum": "StreakBreakBehavior", "required": true },
+        "grace_token_store_item_id": {
+          "type": "uuid",
+          "required": false,
+          "ref": "StoreItem.store_item_id",
+          "notes": "Consumable token item used to shield a break."
+        },
+        "auto_use_token": { "type": "bool", "required": true, "default": true },
+        "max_token_uses_per_month": { "type": "int", "required": false, "min": 1 },
+        "timezone": { "type": "string", "required": true },
+        "max_active_streaks_hint": { "type": "int", "required": false, "notes": "Guardrail: recommend 3, cap 5." },
+        "created_by_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "created_at": { "type": "datetime", "required": true },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "StreakState": {
+      "description": "User’s current progress for a streak.",
+      "primary_key": "streak_state_id",
+      "fields": {
+        "streak_state_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "streak_definition_id": { "type": "uuid", "required": true, "ref": "StreakDefinition.streak_definition_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "status": { "type": "string", "enum": "StreakStateStatus", "required": true },
+        "current_count": { "type": "int", "required": true, "min": 0 },
+        "best_count": { "type": "int", "required": true, "min": 0 },
+        "current_period_key": { "type": "string", "required": true, "notes": "Daily: YYYY-MM-DD, Weekly: YYYY-Www" },
+        "period_satisfied": { "type": "bool", "required": true },
+        "last_incremented_at": { "type": "datetime", "required": false },
+        "last_broken_at": { "type": "datetime", "required": false },
+        "last_shielded_at": { "type": "datetime", "required": false },
+        "tokens_used_this_month": { "type": "int", "required": true, "min": 0 },
+        "updated_at": { "type": "datetime", "required": true }
+      }
+    },
+    "StreakShieldUse": {
+      "description": "Explicit record of consuming a token to prevent a streak break (for explainability + security).",
+      "primary_key": "streak_shield_use_id",
+      "fields": {
+        "streak_shield_use_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "patient_id": { "type": "uuid", "required": true, "ref": "PatientProfile.patient_id" },
+        "streak_state_id": { "type": "uuid", "required": true, "ref": "StreakState.streak_state_id" },
+        "streak_definition_id": { "type": "uuid", "required": true, "ref": "StreakDefinition.streak_definition_id" },
+        "period_key": { "type": "string", "required": true },
+        "store_item_id": { "type": "uuid", "required": true, "ref": "StoreItem.store_item_id" },
+        "inventory_id": { "type": "uuid", "required": false, "ref": "UserInventory.user_inventory_id" },
+        "used_at": { "type": "datetime", "required": true },
+        "notes": { "type": "text", "required": false }
+      }
+    },
+
+    "AuthSession": {
+      "description": "Security object: active user sessions for revocation and incident response.",
+      "primary_key": "session_id",
+      "fields": {
+        "session_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "created_at": { "type": "datetime", "required": true },
+        "expires_at": { "type": "datetime", "required": true },
+        "revoked_at": { "type": "datetime", "required": false },
+        "last_ip_address": { "type": "string", "required": false },
+        "last_user_agent": { "type": "string", "required": false }
+      }
+    },
+    "ApiToken": {
+      "description": "Security object: future integrations. Store only hashed token; never store plaintext.",
+      "primary_key": "api_token_id",
+      "fields": {
+        "api_token_id": { "type": "uuid", "required": true },
+        "workspace_id": { "type": "uuid", "required": true, "ref": "Workspace.workspace_id" },
+        "created_by_user_id": { "type": "uuid", "required": true, "ref": "User.user_id" },
+        "label": { "type": "string", "required": true },
+        "token_hash": { "type": "string", "required": true },
+        "scopes": { "type": "array", "required": false, "items": "string" },
+        "created_at": { "type": "datetime", "required": true },
+        "last_used_at": { "type": "datetime", "required": false },
+        "revoked_at": { "type": "datetime", "required": false }
+      }
+    }
+  },
+  "recommended_invariants": [
+    "RLS: Every query must be constrained by workspace_id; patient-owned tables must also constrain by patient_id when applicable.",
+    "RBAC: All sensitive operations must check RolePermission at runtime; do not hardcode role behavior.",
+    "AuditEvent must be written for create/update/delete/export/restore for any object.",
+    "SensitiveAccessEvent must be written for view/download/print/share operations on high-sensitivity objects (medications/prescriptions/intake/budget/attachments).",
+    "Do not store long-lived public URLs for attachments. Use object_key + signed URLs generated on demand; log SensitiveAccessEvent on access.",
+    "Coins: CoinLedgerEntry is authoritative; CoinWallet is a cache only.",
+    "Points: PointsLedgerEntry is authoritative; UserProgress.total_points and levels are caches only.",
+    "Task completion: When a TaskInstance transitions to done, write a PointsLedgerEntry and (optionally) a CoinLedgerEntry if the design later allows task coin rewards.",
+    "Group bonuses: Awarding a TaskGroupDailyResult must write a PointsLedgerEntry linked to that result.",
+    "Notifications unify previous alerts: do not reintroduce a separate Alert table in v1.0.",
+    "Feature toggles: Enabling/disabling must enforce FeatureModule dependencies to prevent broken states.",
+    "Streak shielding: If a streak is saved via token, decrement UserInventory.quantity, create StreakShieldUse, and update StreakState.last_shielded_at.",
+    "Tokens/grace: The 'grace_token' label is renameable via CurrencyLabel, but token identity is enforced by StoreItem.type=consumable_token and metadata token_key='grace_token'.",
+    "Sessions/tokens: Store only hashes for ApiToken/token secrets; revoke tokens and sessions on suspicion and log in AuditEvent."
+  ],
+  "deprecations": [
+    {
+      "deprecated_in": "1.3.0",
+      "object": "Alert",
+      "replacement": "Notification",
+      "notes": "All prior alert types (dose_reminder, refill_due, etc.) are now Notification.type values."
+    }
+  ]
+}
