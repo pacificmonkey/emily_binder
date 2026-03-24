@@ -1,31 +1,45 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth-store'
+import { supabase } from '@/lib/supabase'
 
 export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const signIn = useAuthStore((s) => s.signIn)
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
     setLoading(true)
 
     try {
-      await signIn(email, password)
-      navigate('/')
+      if (mode === 'signup') {
+        const { error: signUpError } = await supabase.auth.signUp({ email, password })
+        if (signUpError) throw signUpError
+        // Auto sign-in after signup
+        await signIn(email, password)
+        navigate('/')
+      } else {
+        await signIn(email, password)
+        navigate('/')
+      }
     } catch (err) {
       if (err instanceof Error) {
         if (err.message.includes('Invalid login')) {
           setError("That password didn't work. Try again or reset your password.")
         } else if (err.message.includes('not authorized')) {
           setError("This email isn't set up yet. Ask your admin to add you.")
+        } else if (err.message.includes('already registered')) {
+          setError("This email is already registered. Try signing in instead.")
         } else {
-          setError("Couldn't sign in. Check your connection and try again.")
+          setError(err.message || "Something went wrong. Check your connection and try again.")
         }
       }
     } finally {
@@ -38,7 +52,9 @@ export function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-content">Emily's Missions</h1>
-          <p className="mt-2 text-content-secondary">Sign in to continue</p>
+          <p className="mt-2 text-content-secondary">
+            {mode === 'signin' ? 'Sign in to continue' : 'Create your account'}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -68,7 +84,8 @@ export function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              autoComplete="current-password"
+              minLength={6}
+              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
               className="w-full rounded-soft border border-border bg-surface px-3 py-2.5 text-content placeholder:text-content-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
             />
           </div>
@@ -79,14 +96,49 @@ export function LoginPage() {
             </div>
           )}
 
+          {success && (
+            <div role="status" className="rounded-soft bg-green-50 p-3 text-sm text-green-800">
+              {success}
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={loading}
             className="w-full rounded-soft bg-accent px-4 py-2.5 text-sm font-medium text-accent-contrast hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Signing in...' : 'Sign in'}
+            {loading
+              ? (mode === 'signup' ? 'Creating account...' : 'Signing in...')
+              : (mode === 'signup' ? 'Create account' : 'Sign in')
+            }
           </button>
         </form>
+
+        <p className="mt-4 text-center text-sm text-content-secondary">
+          {mode === 'signin' ? (
+            <>
+              Don't have an account?{' '}
+              <button
+                type="button"
+                onClick={() => { setMode('signup'); setError(null); setSuccess(null) }}
+                className="text-accent hover:underline font-medium"
+              >
+                Sign up
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{' '}
+              <button
+                type="button"
+                onClick={() => { setMode('signin'); setError(null); setSuccess(null) }}
+                className="text-accent hover:underline font-medium"
+              >
+                Sign in
+              </button>
+            </>
+          )}
+        </p>
       </div>
     </div>
   )
