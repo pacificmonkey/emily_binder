@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --surface: 0 0% 100%;
+    --surface-raised: 210 20% 98%;
+    --surface-sunken: 210 20% 96%;
+    --content: 222 47% 11%;
+    --content-secondary: 215 16% 47%;
+    --content-muted: 215 16% 65%;
+    --border: 214 20% 88%;
+    /* Teal accent — "Calm" preset */
+    --accent: 168 76% 36%;
+    --accent-hover: 168 76% 28%;
+    --accent-light: 168 76% 95%;
+    --accent-contrast: 0 0% 100%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --surface: 222 47% 7%;
+    --surface-raised: 222 47% 11%;
+    --surface-sunken: 222 47% 5%;
+    --content: 210 20% 98%;
+    --content-secondary: 215 16% 65%;
+    --content-muted: 215 16% 47%;
+    --border: 215 20% 20%;
+    --accent: 168 76% 42%;
+    --accent-hover: 168 76% 50%;
+    --accent-light: 168 76% 15%;
+    --accent-contrast: 0 0% 100%;
+  }
+
+  .high-contrast {
+    --content: 0 0% 0%;
+    --content-secondary: 0 0% 20%;
+    --border: 0 0% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-surface text-content font-sans antialiased;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible */
+:focus-visible {
+  @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-surface;
+}
