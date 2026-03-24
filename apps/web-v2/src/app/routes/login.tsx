@@ -11,7 +11,15 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const signIn = useAuthStore((s) => s.signIn)
+  const user = useAuthStore((s) => s.user)
+  const authLoading = useAuthStore((s) => s.loading)
   const navigate = useNavigate()
+
+  // Redirect already-authenticated users to the app
+  if (!authLoading && user) {
+    navigate('/', { replace: true })
+    return null
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

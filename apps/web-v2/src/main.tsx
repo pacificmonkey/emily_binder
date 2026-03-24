@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import * as Sentry from '@sentry/react'
@@ -6,6 +6,7 @@ import { queryClient } from '@/lib/query-client'
 import { AppRouter } from '@/app/router'
 import { useAuthStore } from '@/stores/auth-store'
 import { Toaster } from '@/components/ui/toaster'
+import { LoadingScreen } from '@/components/shared/loading-screen'
 import './styles/globals.css'
 
 // Initialize Sentry
@@ -18,14 +19,29 @@ if (import.meta.env.VITE_SENTRY_DSN) {
   })
 }
 
-// Initialize auth
-useAuthStore.getState().initialize()
+/**
+ * AuthGate: Ensures auth initialization completes before rendering children.
+ * Without this, the router could render protected routes before we know
+ * whether the user is authenticated — a security vulnerability.
+ */
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    useAuthStore.getState().initialize().then(() => setReady(true))
+  }, [])
+
+  if (!ready) return <LoadingScreen />
+  return <>{children}</>
+}
 
 function App() {
   return (
     <Sentry.ErrorBoundary fallback={<AppErrorFallback />}>
       <QueryClientProvider client={queryClient}>
-        <AppRouter />
+        <AuthGate>
+          <AppRouter />
+        </AuthGate>
         <Toaster />
       </QueryClientProvider>
     </Sentry.ErrorBoundary>

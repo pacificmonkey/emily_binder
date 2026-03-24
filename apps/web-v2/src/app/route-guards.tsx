@@ -1,10 +1,14 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth-store'
+import { LoadingScreen } from '@/components/shared/loading-screen'
 
 export function ProtectedRoute() {
   const { user, loading } = useAuthStore()
 
-  if (loading) return null // Layout handles loading state
+  // SECURITY: Block rendering entirely until auth state is resolved.
+  // Returning null or <Outlet /> here before loading completes would
+  // leak protected content to unauthenticated users.
+  if (loading) return <LoadingScreen />
   if (!user) return <Navigate to="/login" replace />
 
   return <Outlet />
