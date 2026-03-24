@@ -12,7 +12,7 @@ import {
   useUpdateDecoration,
   useRemoveDecoration,
 } from '@/hooks/use-sticker-wall';
-import { useToast } from '@/components/ui/toaster';
+import { toast } from '@/components/ui/toaster';
 import type { HomeDecoration } from '@/types/database';
 
 // History entry: snapshot of all decorations
@@ -31,8 +31,6 @@ export default function StickerWallPage() {
   const { data: inventory = [], isLoading: isLoadingInventory } = useUserInventory();
   const updateDecorationMutation = useUpdateDecoration();
   const removeDecorationMutation = useRemoveDecoration();
-  const { addToast } = useToast();
-
   // Initialize history with current decorations
   useEffect(() => {
     if (decorations.length >= 0 && history.length === 0) {
@@ -143,13 +141,13 @@ export default function StickerWallPage() {
         );
         pushToHistory(newDecorations);
         setSelectedDecorationId(null);
-        addToast({
+        toast({
           title: 'Sticker removed',
           description: 'Your sticker has been removed from the wall.',
         });
       },
     });
-  }, [selectedDecoration, decorations, removeDecorationMutation, pushToHistory, addToast]);
+  }, [selectedDecoration, decorations, removeDecorationMutation, pushToHistory]);
 
   const handleUndo = useCallback(() => {
     if (historyIndex <= 0) return;
