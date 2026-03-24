@@ -24,6 +24,52 @@ interface AuthState {
   setPatientInfo: (info: { workspaceId: string; patientId: string; displayName: string; role: RoleKey }) => void
 }
 
+/**
+ * After authentication, load the user's workspace membership, patient profile,
+ * and role so that route guards and data-fetching hooks work correctly.
+ */
+async function loadUserContext(
+  userId: string,
+  set: (state: Partial<AuthState>) => void,
+) {
+  try {
+    // Get workspace membership (role + workspace)
+    const { data: membership } = await supabase
+      .from('workspace_membership')
+      .select('workspace_id, role_key')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .limit(1)
+      .single()
+
+    if (!membership) return // not onboarded yet
+
+    // Get patient profile
+    const { data: patient } = await supabase
+      .from('patient_profile')
+      .select('patient_id, full_name')
+      .eq('workspace_id', membership.workspace_id)
+      .limit(1)
+      .single()
+
+    // Get user display name
+    const { data: userRecord } = await supabase
+      .from('user')
+      .select('display_name')
+      .eq('user_id', userId)
+      .single()
+
+    set({
+      role: membership.role_key as RoleKey,
+      workspaceId: membership.workspace_id,
+      patientId: patient?.patient_id ?? userId,
+      displayName: userRecord?.display_name ?? null,
+    })
+  } catch {
+    // If queries fail (e.g. RLS), leave role as null — user will see empty state
+  }
+}
+
 export const useAuthStore = create<AuthState>((set, _get) => ({
   user: null,
   session: null,
@@ -40,13 +86,17 @@ export const useAuthStore = create<AuthState>((set, _get) => ({
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        set({ user: session.user, session, loading: false })
-      } else {
-        set({ loading: false })
+        set({ user: session.user, session })
+        // Load workspace context for the authenticated user
+        await loadUserContext(session.user.id, set)
       }
+      set({ loading: false })
 
-      supabase.auth.onAuthStateChange((_event, session) => {
+      supabase.auth.onAuthStateChange(async (_event, session) => {
         set({ user: session?.user ?? null, session })
+        if (session?.user) {
+          await loadUserContext(session.user.id, set)
+        }
       })
     } catch {
       set({ loading: false })
@@ -54,8 +104,13 @@ export const useAuthStore = create<AuthState>((set, _get) => ({
   },
 
   signIn: async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
+    // Eagerly load workspace context so it's ready before navigation
+    if (data.user) {
+      set({ user: data.user, session: data.session })
+      await loadUserContext(data.user.id, set)
+    }
   },
 
   signOut: async () => {

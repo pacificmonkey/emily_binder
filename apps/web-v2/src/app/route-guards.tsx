@@ -21,8 +21,8 @@ export function AdminRoute() {
 export function MemberRoute() {
   const { role, isImpersonating } = useAuthStore()
 
-  // Admins impersonating a patient can access member routes
-  if (role === 'member' || role === 'support' || isImpersonating) {
+  // Admins, members, and support can all access member routes
+  if (role === 'admin' || role === 'member' || role === 'support' || isImpersonating) {
     return <Outlet />
   }
 
