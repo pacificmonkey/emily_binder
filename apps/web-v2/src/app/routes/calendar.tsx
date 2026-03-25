@@ -6,6 +6,7 @@ import { useEvents } from '@/hooks/use-events'
 import { MonthView } from '@/components/calendar/month-view'
 import { WeekView } from '@/components/calendar/week-view'
 import { EventCard } from '@/components/calendar/event-card'
+import { AddEventModal } from '@/components/calendar/add-event-modal'
 import { PageHeader } from '@/components/shared/page-header'
 import { Button } from '@/components/ui/button'
 import { ListSkeleton } from '@/components/shared/loading-skeleton'
@@ -17,6 +18,7 @@ export default function CalendarPage() {
   const [view, setView] = useState<CalendarView>('month')
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDay, setSelectedDay] = useState<Date | null>(new Date())
+  const [showAddEvent, setShowAddEvent] = useState(false)
 
   const startDate = format(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1), 'yyyy-MM-dd')
   const endDate = format(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0), 'yyyy-MM-dd')
@@ -135,11 +137,19 @@ export default function CalendarPage() {
 
       {/* FAB */}
       <button
+        onClick={() => setShowAddEvent(true)}
         className="fixed bottom-24 right-4 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-contrast shadow-raised hover:bg-accent-hover sm:bottom-8"
         aria-label="Add event"
       >
         <Plus className="h-6 w-6" />
       </button>
+
+      {/* Add Event Modal */}
+      <AddEventModal
+        open={showAddEvent}
+        onClose={() => setShowAddEvent(false)}
+        defaultDate={selectedDay}
+      />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -11,15 +11,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { toast } from '@/components/ui/toaster'
 import { PageHeader } from '@/components/shared/page-header'
-import { getStreaks, createStreak } from '@/services/streaks'
-import type { StreakWithState } from '@/types/database'
+import { useStreaks, useCreateStreak } from '@/hooks/use-streaks'
 
 const TEMPLATE_KEY_OPTIONS = [
-  { value: 'daily_exercise', label: 'Daily Exercise' },
-  { value: 'meditation', label: 'Meditation' },
-  { value: 'water_intake', label: 'Water Intake' },
-  { value: 'sleep_quality', label: 'Sleep Quality' },
-  { value: 'medication_adherence', label: 'Medication Adherence' },
+  { value: 'complete_n_filtered', label: 'Complete N Filtered Tasks' },
+  { value: 'complete_any_filtered', label: 'Complete Any Filtered Task' },
+  { value: 'perfect_must_do', label: 'Perfect Must-Do Tasks' },
+  { value: 'complete_all_tasks', label: 'Complete All Tasks' },
+  { value: 'earn_vp_target', label: 'Earn VP Target' },
 ]
 
 interface BonusMilestone {
@@ -28,15 +27,14 @@ interface BonusMilestone {
 }
 
 export default function StreaksAdmin() {
-  const [streaks, setStreaks] = useState<StreakWithState[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: streaks = [], isLoading: loading } = useStreaks()
+  const createStreakMutation = useCreateStreak()
   const [showCreate, setShowCreate] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [form, setForm] = useState({
     name: '',
     emoji: '',
-    template_key: 'daily_exercise',
+    template_key: 'complete_n_filtered',
     period: 'daily',
     coin_reward: '',
     description: '',
@@ -46,27 +44,6 @@ export default function StreaksAdmin() {
   const [milestones, setMilestones] = useState<BonusMilestone[]>([
     { days: '', coins: '' },
   ])
-
-  useEffect(() => {
-    loadStreaks()
-  }, [])
-
-  const loadStreaks = async () => {
-    try {
-      setLoading(true)
-      const data = await getStreaks()
-      setStreaks(data)
-    } catch (error) {
-      console.error('Failed to load streaks:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to load streaks',
-        variant: 'error',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleAddMilestone = () => {
     setMilestones([...milestones, { days: '', coins: '' }])
@@ -97,56 +74,36 @@ export default function StreaksAdmin() {
       return
     }
 
-    try {
-      setIsSubmitting(true)
+    // Build bonus milestones
+    const bonusMilestones = milestones
+      .filter((m) => m.days && m.coins)
+      .map((m) => ({
+        days: parseInt(m.days),
+        coins: parseInt(m.coins),
+      }))
 
-      // Build bonus milestones
-      const bonusMilestones = milestones
-        .filter((m) => m.days && m.coins)
-        .map((m) => ({
-          days: parseInt(m.days),
-          coins: parseInt(m.coins),
-        }))
+    await createStreakMutation.mutateAsync({
+      name: form.name,
+      emoji: form.emoji,
+      template_key: form.template_key as any,
+      period: form.period as 'daily' | 'weekly',
+      coin_reward: parseInt(form.coin_reward),
+      description: form.description || null,
+      bonus_milestones: bonusMilestones.length > 0 ? bonusMilestones : null,
+      break_behavior: form.break_behavior,
+    })
 
-      await createStreak({
-        name: form.name,
-        emoji: form.emoji,
-        template_key: form.template_key as any,
-        period: form.period as 'daily' | 'weekly',
-        coin_reward: parseInt(form.coin_reward),
-        description: form.description || null,
-        bonus_milestones: bonusMilestones.length > 0 ? bonusMilestones : null,
-        break_behavior: form.break_behavior,
-      })
-
-      toast({
-        title: 'Success',
-        description: `Streak "${form.name}" created`,
-      })
-
-      setForm({
-        name: '',
-        emoji: '',
-        template_key: 'daily_exercise',
-        period: 'daily',
-        coin_reward: '',
-        description: '',
-        break_behavior: 'break',
-      })
-      setMilestones([{ days: '', coins: '' }])
-      setShowCreate(false)
-      await loadStreaks()
-    } catch (error) {
-      console.error('Failed to create streak:', error)
-      toast({
-        title: 'Error',
-        description:
-          error instanceof Error ? error.message : 'Failed to create streak',
-        variant: 'error',
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+    setForm({
+      name: '',
+      emoji: '',
+      template_key: 'complete_n_filtered',
+      period: 'daily',
+      coin_reward: '',
+      description: '',
+      break_behavior: 'break',
+    })
+    setMilestones([{ days: '', coins: '' }])
+    setShowCreate(false)
   }
 
   return (
@@ -351,12 +308,12 @@ export default function StreaksAdmin() {
                   type="button"
                   variant="outline"
                   onClick={() => setShowCreate(false)}
-                  disabled={isSubmitting}
+                  disabled={createStreakMutation.isPending}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Creating...' : 'Create Streak'}
+                <Button type="submit" disabled={createStreakMutation.isPending}>
+                  {createStreakMutation.isPending ? 'Creating...' : 'Create Streak'}
                 </Button>
               </div>
             </form>

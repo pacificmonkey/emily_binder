@@ -41,7 +41,7 @@ export default function CoinsPage() {
 
     setIsSubmitting(true)
     try {
-      const { error } = await supabase.rpc('award_coins', {
+      const { error } = await supabase.rpc('add_coins', {
         p_patient_id: selectedPatient,
         p_amount: amountNum,
         p_reason: reason,

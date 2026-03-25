@@ -6,6 +6,7 @@ import {
   updateDecoration,
   removeDecoration,
 } from '@/services/store';
+import { toast } from '@/components/ui/toaster';
 import type {
   HomeDecoration,
   UpdateDecorationInput,
@@ -42,6 +43,9 @@ export function usePlaceSticker() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['decorations'] });
       queryClient.invalidateQueries({ queryKey: ['user-inventory'] });
+    },
+    onError: () => {
+      toast({ title: "Couldn't place that sticker. Try again?", variant: 'error' });
     },
   });
 }
@@ -106,6 +110,9 @@ export function useRemoveDecoration() {
     mutationFn: removeDecoration,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['decorations'] });
+    },
+    onError: () => {
+      toast({ title: "Couldn't remove that sticker. Try again?", variant: 'error' });
     },
   });
 }

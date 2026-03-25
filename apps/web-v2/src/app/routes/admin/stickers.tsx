@@ -32,10 +32,10 @@ export default function StickersAdmin() {
 
   // Store item form state
   const [itemForm, setItemForm] = useState({
-    type: 'reward',
+    type: 'sticker',
     name: '',
     coin_cost: '',
-    inventory_kind: 'limited',
+    inventory_kind: 'cosmetic',
     description: '',
   })
 
@@ -144,10 +144,10 @@ export default function StickersAdmin() {
       })
 
       setItemForm({
-        type: 'reward',
+        type: 'sticker',
         name: '',
         coin_cost: '',
-        inventory_kind: 'limited',
+        inventory_kind: 'cosmetic',
         description: '',
       })
       setShowCreateItem(false)
@@ -312,10 +312,10 @@ export default function StickersAdmin() {
                       setItemForm({ ...itemForm, type: e.target.value })
                     }
                   >
-                    <option value="reward">Reward</option>
-                    <option value="powerup">Power-up</option>
-                    <option value="cosmetic">Cosmetic</option>
-                    <option value="collectible">Collectible</option>
+                    <option value="sticker">Sticker</option>
+                    <option value="home_decoration">Home Decoration</option>
+                    <option value="consumable_token">Consumable Token</option>
+                    <option value="real_world_reward">Real-World Reward</option>
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -331,9 +331,9 @@ export default function StickersAdmin() {
                       setItemForm({ ...itemForm, inventory_kind: e.target.value })
                     }
                   >
-                    <option value="limited">Limited</option>
-                    <option value="unlimited">Unlimited</option>
+                    <option value="cosmetic">Cosmetic</option>
                     <option value="consumable">Consumable</option>
+                    <option value="entitlement">Entitlement</option>
                   </select>
                 </div>
               </div>

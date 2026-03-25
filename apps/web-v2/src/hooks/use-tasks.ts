@@ -69,6 +69,7 @@ export function useUncompleteTask() {
     },
     onError: (_err, _id, context) => {
       queryClient.setQueryData(['tasks', 'today'], context?.previous)
+      toast({ title: "Couldn't undo that. Try again?", variant: 'error' })
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks', 'today'] })

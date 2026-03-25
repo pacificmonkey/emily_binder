@@ -40,6 +40,7 @@ export function AddGoalModal({ open, onClose }: AddGoalModalProps) {
     register,
     handleSubmit,
     watch,
+    setValue,
     reset,
     control,
     formState: { errors },
@@ -125,13 +126,7 @@ export function AddGoalModal({ open, onClose }: AddGoalModalProps) {
                 <button
                   key={type}
                   type="button"
-                  onClick={() => {
-                    // Use form's setValue would be better, but using native input works
-                    const radios = document.querySelectorAll('input[name="goal_type"]') as NodeListOf<HTMLInputElement>
-                    radios.forEach((r) => {
-                      if (r.value === type) r.checked = true
-                    })
-                  }}
+                  onClick={() => setValue('goal_type', type)}
                   className={cn(
                     'flex-1 rounded-soft border-2 px-4 py-2 text-sm font-medium transition-colors',
                     goalType === type
@@ -144,11 +139,7 @@ export function AddGoalModal({ open, onClose }: AddGoalModalProps) {
                   {type === 'destiny' ? 'Destiny (Long-term)' : 'Quest (Short-term)'}
                 </button>
               ))}
-              <input
-                {...register('goal_type')}
-                type="hidden"
-                value={goalType}
-              />
+              <input type="hidden" {...register('goal_type')} />
             </div>
           </div>
 

@@ -15,15 +15,20 @@ import {
   useBudgetTransactions,
   useBudgetSummary,
   useDeleteTransaction,
+  useCreateAccount,
 } from '@/hooks/use-budget'
 import { toast } from '@/components/ui/toaster'
 import { ConfirmDialog } from '@/components/shared/confirm-dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Trash2, Plus } from 'lucide-react'
 
 export default function BudgetPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null)
+  const [showCreateAccount, setShowCreateAccount] = useState(false)
+  const [newAccountName, setNewAccountName] = useState('')
 
   const privacyMode = useSettingsStore((state) => state.privacyMode)
 
@@ -36,6 +41,7 @@ export default function BudgetPage() {
     error: summaryError,
   } = useBudgetSummary()
   const deleteTransaction = useDeleteTransaction()
+  const createAccount = useCreateAccount()
 
   // Calculate balances for each account
   const accountBalances = useMemo(() => {
@@ -59,6 +65,31 @@ export default function BudgetPage() {
 
     return balances
   }, [accounts, transactions])
+
+  const handleCreateAccount = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newAccountName.trim()) return
+
+    try {
+      await createAccount.mutateAsync({
+        name: newAccountName.trim(),
+        restriction_type: 'none',
+      })
+      toast({
+        title: 'Account created.',
+        variant: 'success',
+      })
+      setNewAccountName('')
+      setShowCreateAccount(false)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create account'
+      toast({
+        title: 'Error',
+        description: errorMessage,
+        variant: 'error',
+      })
+    }
+  }
 
   const handleDeleteClick = (transactionId: string) => {
     setTransactionToDelete(transactionId)
@@ -128,10 +159,51 @@ export default function BudgetPage() {
           <ListSkeleton count={3} />
         </div>
       ) : !hasAccounts ? (
-        <EmptyState
-          icon={<div className="text-4xl">💰</div>}
-          message="No budget accounts yet. Create your first account to get started."
-        />
+        <div className="space-y-4">
+          <EmptyState
+            icon={<div className="text-4xl">💰</div>}
+            message="No budget accounts yet. Create your first account to get started."
+          />
+          {!showCreateAccount ? (
+            <div className="flex justify-center">
+              <Button onClick={() => setShowCreateAccount(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create Account
+              </Button>
+            </div>
+          ) : (
+            <form onSubmit={handleCreateAccount} className="mx-auto max-w-sm space-y-3 rounded-soft bg-surface shadow-soft p-4">
+              <div>
+                <Label htmlFor="account-name">Account Name</Label>
+                <Input
+                  id="account-name"
+                  value={newAccountName}
+                  onChange={(e) => setNewAccountName(e.target.value)}
+                  placeholder="e.g., Checking, Savings"
+                  className="mt-1"
+                  autoFocus
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => { setShowCreateAccount(false); setNewAccountName('') }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="flex-1"
+                  disabled={createAccount.isPending || !newAccountName.trim()}
+                >
+                  {createAccount.isPending ? 'Creating...' : 'Create'}
+                </Button>
+              </div>
+            </form>
+          )}
+        </div>
       ) : (
         <>
           {/* Account Cards Grid */}

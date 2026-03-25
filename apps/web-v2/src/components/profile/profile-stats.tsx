@@ -145,9 +145,9 @@ export function ProfileStats() {
               <p className="text-lg font-bold text-content">{activeStreaks.length}</p>
             </div>
 
-            {/* Total Badges */}
+            {/* Available Badges */}
             <div className="rounded-soft bg-surface-sunken p-3">
-              <p className="text-xs text-content-secondary mb-1">Total</p>
+              <p className="text-xs text-content-secondary mb-1">Available</p>
               <p className="text-lg font-bold text-content">{badges.length}</p>
             </div>
           </div>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bell } from 'lucide-react'
 import { format } from 'date-fns'
@@ -8,6 +9,7 @@ import { useStreaks } from '@/hooks/use-streaks'
 import { useUserProgress } from '@/hooks/use-user-progress'
 import { useNotificationCount } from '@/hooks/use-notifications'
 import { TaskList, TaskListSkeleton } from '@/components/tasks/task-list'
+import { AddTaskModal } from '@/components/tasks/add-task-modal'
 import { MoodCheck } from '@/components/shared/mood-check'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -26,6 +28,7 @@ export default function TodayPage() {
   const { data: notifCount } = useNotificationCount()
   const completeTask = useCompleteTask()
   const uncompleteTask = useUncompleteTask()
+  const [showAddTask, setShowAddTask] = useState(false)
 
 
   const handleComplete = (taskInstanceId: string) => {
@@ -112,25 +115,41 @@ export default function TodayPage() {
             )}
 
             {/* Daily win bar */}
-            <div>
-              <div className="flex items-center justify-between text-sm mb-1">
-                <span className="text-content-secondary">Daily Win</span>
-                <span className="font-medium text-content" aria-live="polite">
-                  {completedTasks} of {totalTasks} done
-                </span>
+            {totalTasks > 0 ? (
+              <div>
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span className="text-content-secondary">Daily Win</span>
+                  <span className="font-medium text-content" aria-live="polite">
+                    {completedTasks} of {totalTasks} done
+                  </span>
+                </div>
+                <Progress
+                  value={completedTasks}
+                  max={totalTasks}
+                  label={`Daily win: ${completedTasks} of ${totalTasks} tasks done`}
+                  className={allDone ? '[&>div]:bg-success' : ''}
+                />
+                {allDone && (
+                  <p className="mt-1 text-xs font-medium text-success" role="status">
+                    You did it — all tasks done today!
+                  </p>
+                )}
               </div>
-              <Progress
-                value={completedTasks}
-                max={Math.max(totalTasks, 1)}
-                label={`Daily win: ${completedTasks} of ${totalTasks} tasks done`}
-                className={allDone ? '[&>div]:bg-success' : ''}
-              />
-              {allDone && (
-                <p className="mt-1 text-xs font-medium text-success" role="status">
-                  You did it — all tasks done today!
-                </p>
-              )}
-            </div>
+            ) : (
+              <div>
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span className="text-content-secondary">Daily Win</span>
+                  <span className="font-medium text-content-muted" aria-live="polite">
+                    No tasks yet
+                  </span>
+                </div>
+                <Progress
+                  value={0}
+                  max={1}
+                  label="Daily win: no tasks yet"
+                />
+              </div>
+            )}
 
             {/* Streak chips */}
             {streaks && (streaks as any[]).length > 0 && (
@@ -172,19 +191,22 @@ export default function TodayPage() {
             tasks={tasks ?? []}
             onComplete={handleComplete}
             onUncomplete={handleUncomplete}
-            onAddTask={() => navigate('/tasks/add')}
+            onAddTask={() => setShowAddTask(true)}
           />
         )}
       </SectionErrorBoundary>
 
       {/* FAB */}
       <button
-        onClick={() => navigate('/tasks/add')}
+        onClick={() => setShowAddTask(true)}
         className="fixed bottom-24 right-4 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-contrast shadow-raised hover:bg-accent-hover focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:bottom-8"
         aria-label="Add task"
       >
         <Plus className="h-6 w-6" />
       </button>
+
+      {/* Add Task Modal */}
+      <AddTaskModal open={showAddTask} onClose={() => setShowAddTask(false)} />
     </div>
   )
 }
